@@ -18,8 +18,7 @@ sudo apt install alsa-utils
 
 https://sr.ht/~geb/dotool/
 
-
-
+```bash
 git clone https://git.sr.ht/~geb/dotool
 
 cd dotool
@@ -34,4 +33,13 @@ groupadd -f input
 
 usermod -a -G input $USER
 
-REBOOT
+sudo reboot
+```
+
+### 4) TGPT
+
+https://github.com/aandrew-me/tgpt
+
+```bash
+curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
+```
