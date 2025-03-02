@@ -1,0 +1,12 @@
+*.mp3
+*.wav
+*.mp4
+*.aac
+*.flac
+*.ogg
+*.wma
+.cache/
+_models/
+_xxl_data/
+*.txt
+*.text
