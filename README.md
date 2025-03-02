@@ -10,6 +10,10 @@ curl https://github.com/Purfview/whisper-standalone-win/releases/download/Faster
 
 ### 2) Arecord
 
+```bash
+sudo apt install alsa-utils
+```
+
 ### 3) Dotool
 
 https://sr.ht/~geb/dotool/
