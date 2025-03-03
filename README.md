@@ -1,4 +1,4 @@
-# Smart Action
+# Smart Actions
 
 Project to perform several actions like vocal dictation, vocal query to AI chatbot, etc..
 
