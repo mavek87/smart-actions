@@ -1,6 +1,6 @@
 #!/bin/bash
 
-folder="$HOME/FasterWhisper"
+folder="/opt/FasterWhisper"
 
 audio_file_to_text() {
     echo "CONVERT AUDIO FILE TO TEXT"
