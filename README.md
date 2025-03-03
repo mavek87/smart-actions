@@ -1,4 +1,6 @@
-# Smart Actions
+# Smart Action
+
+Project to perform several actions like vocal dictation, vocal query to AI chatbot, etc..
 
 ## Installation
 
