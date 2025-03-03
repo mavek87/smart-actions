@@ -1,3 +1,5 @@
+# Smart Actions
+
 ## Installation
 
 ### 1) Faster Whisper
