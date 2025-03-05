@@ -42,13 +42,14 @@ execute_action() {
   arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   $faster_whisper_cmd &&
-    #    echo "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
+#    echo "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
     tgpt -q -preprompt "$(xclip -selection primary -o)" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     {
       for line in "${lines[@]}"; do
-        echo type "$line"
+        echo type $line
+#         TODO: perchè enter dopo ogni linea? verificare. senza non mette a capo, con ne mette uno di troppo
         echo key Enter
       done
     } | DOTOOL_XKB_LAYOUT=it dotool
