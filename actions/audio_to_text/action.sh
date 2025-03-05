@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export SMART_ACTIONS_DIR="/opt/FasterWhisper"
-export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_DIR}/audio_to_text.conf"
+export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/audio_to_text"
+export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
 read_command_builder_data_output() {
   declare -A CMD_VARS
@@ -19,28 +19,27 @@ read_command_builder_data_output() {
 
   input_file="${CMD_VARS["input_file"]}"
   if [ ! -f "$input_file" ]; then
-      echo "Error: input file '$input_file' does not exist!"
-      exit 1
+    echo "Error: input file '$input_file' does not exist!"
+    exit 1
   fi
 
   model="${CMD_VARS["model"]}"
   task="${CMD_VARS["task"]}"
   language="${CMD_VARS["language"]}"
-  audio_device="${CMD_VARS["audio_device"]}"
 }
 
 execute_action() {
-  faster_whisper_cmd="${SMART_ACTIONS_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
+  faster_whisper_cmd="${SMART_ACTIONS_PROJECT_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
 
   if [[ -n "$language" ]]; then
     faster_whisper_cmd+=" --language $language"
   fi
 
-  faster_whisper_cmd+=" ${SMART_ACTIONS_DIR}/rec_audio.wav"
+  faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
-  cp "$input_file" "${SMART_ACTIONS_DIR}/rec_audio.wav" && \
-    $faster_whisper_cmd && \
-    echo type "$(tr '\n' ' ' <"${SMART_ACTIONS_DIR}/rec_audio.text")" | \
+  cp "$input_file" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav" &&
+    $faster_whisper_cmd &&
+    echo type "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
     DOTOOL_XKB_LAYOUT=it dotool
 }
 
@@ -48,7 +47,7 @@ execute_action() {
 result=$?
 
 if [[ $result -ne 0 ]]; then
-    exit $result
+  exit $result
 fi
 
 read_command_builder_data_output
