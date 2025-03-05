@@ -89,10 +89,10 @@ mkdir -p /tmp
 touch "$SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE"
 
 case "$1" in
--h | help |--help)
+help | -h | --help)
   help
   ;;
-end)
+end | -e | --end)
   end
   ;;
 *)

@@ -48,5 +48,10 @@ https://github.com/aandrew-me/tgpt
 curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
 ```
 
+### TODO
+
+- unify ai_reply_text_for commands (with a parameter to select if selection is for copied or selected text)
+- unify ai_reply_text with ai_reply_text_terminal (with a parameter to select if wether print to terminal or not)
+
 ## Author
 Matteo Veroni
