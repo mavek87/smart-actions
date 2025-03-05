@@ -155,7 +155,7 @@ help() {
 # Controllo dei parametri passati allo script
 case "$1" in
     audio_file_to_text)
-	shift
+	      shift
         audio_file_to_text "$@"
 	;;
     dictate_text)
