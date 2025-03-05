@@ -1,17 +1,10 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-if [ -z "$SMART_ACTIONS_CONFIG_FILE" ]; then
-  echo "Error: SMART_ACTIONS_CONFIG_FILE not set."
-  exit 1
-fi
-
-declare -A OPTIONS
-declare -A EXAMPLES
-declare -A DEFAULTS
-MANDATORY_OPTIONS=()
-
-description=""
+#if [ -z "$SMART_ACTIONS_CONFIG_FILE" ]; then
+#  echo "Error: SMART_ACTIONS_CONFIG_FILE not set."
+#  exit 1
+#fi
 
 load_config() {
   if [[ -f "$SMART_ACTIONS_CONFIG_FILE" ]]; then
@@ -119,19 +112,19 @@ check_mandatory_options() {
   done
 }
 
+declare -A OPTIONS
+declare -A EXAMPLES
+declare -A DEFAULTS
+MANDATORY_OPTIONS=()
+description=""
+
 load_config
 
-if [ $# -eq 0 ]; then
-  help
-  exit 1
-else
-  parse_args "$@"
-fi
+parse_args "$@"
 
 check_mandatory_options
 
 output=""
-
 for var_name in "${!OPTIONS[@]}"; do
   value="${!var_name}"
 
