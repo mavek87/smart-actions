@@ -50,6 +50,7 @@ curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash 
 
 ### TODO
 
+- unify dictate_command with dictate_text (with parameters)
 - unify ai_reply_text with ai_reply_text_terminal (with a parameter to select if wether print to terminal or not)
 
 ## Author
