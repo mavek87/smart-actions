@@ -1,7 +1,7 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-export CURRENT_SMART_ACTION_NAME="ai_reply_text"
+export CURRENT_SMART_ACTION_NAME="ai_reply_text_for_selection"
 export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/${CURRENT_SMART_ACTION_NAME}"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
@@ -42,8 +42,8 @@ execute_action() {
   arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   $faster_whisper_cmd &&
-    # TODO: add tgpt parameters
-    tgpt -q "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" > "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
+    #    echo "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
+    tgpt -q -preprompt "$(xclip -selection primary -o)" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     {

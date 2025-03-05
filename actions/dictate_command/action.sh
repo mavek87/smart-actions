@@ -24,6 +24,7 @@ read_command_action_builder_data_output() {
   task="${CMD_VARS["task"]}"
   language="${CMD_VARS["language"]}"
   audio_device="${CMD_VARS["audio_device"]}"
+  audio_sampling_rate="${CMD_VARS["audio_sampling_rate"]}"
 }
 
 execute_action() {
@@ -38,8 +39,7 @@ execute_action() {
   faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   echo "Starting audio recording..."
-  # TODO: add parameter for audio frequency
-  arecord -D "${audio_device}" -f cd -c 1 -r 48000 "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
+  arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   $faster_whisper_cmd &&
     echo type "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
