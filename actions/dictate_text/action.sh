@@ -20,12 +20,6 @@ read_command_action_builder_data_output() {
 
   rm -rf "$SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE" 2>/dev/null || true
 
-  input_file="${CMD_VARS["input_file"]}"
-  if [ ! -f "$input_file" ]; then
-    echo "Error: input file '$input_file' does not exist!"
-    exit 1
-  fi
-
   model="${CMD_VARS["model"]}"
   task="${CMD_VARS["task"]}"
   language="${CMD_VARS["language"]}"
@@ -45,8 +39,9 @@ execute_action() {
 
   echo "Starting audio recording..."
   # TODO: add parameter for audio frequency
-  arecord -D "${audio_device}" -f cd -c 1 -r 48000 "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav" &&
-    $faster_whisper_cmd &&
+  arecord -D "${audio_device}" -f cd -c 1 -r 48000 "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
+
+  $faster_whisper_cmd &&
     mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text" &&
     {
       for line in "${lines[@]}"; do
