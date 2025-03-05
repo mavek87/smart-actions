@@ -1,18 +1,15 @@
 #!/bin/bash
 
-# Legge la variabile d'ambiente SMART_ACTIONS_CONFIG_FILE
 if [ -z "$SMART_ACTIONS_CONFIG_FILE" ]; then
-    echo "Errore: la variabile d'ambiente SMART_ACTIONS_CONFIG_FILE non è impostata."
+    echo "Error: SMART_ACTIONS_CONFIG_FILE not set."
     exit 1
 fi
 
-# Dichiarazione di array dinamici
 declare -A OPTIONS
 declare -A EXAMPLES
-declare -A DEFAULTS # TODO not used yet
+declare -A DEFAULTS
 MANDATORY_OPTIONS=()
 
-# Funzione per caricare le opzioni dal file di configurazione
 load_config() {
     if [[ -f "$SMART_ACTIONS_CONFIG_FILE" ]]; then
         while IFS="=" read -r key value; do
@@ -29,6 +26,9 @@ load_config() {
             elif [[ "$key" == EXAMPLES_* ]]; then
                 example_key="${key#EXAMPLES_}"
                 EXAMPLES["$example_key"]="$value"
+            elif [[ "$key" == DEFAULTS_* ]]; then
+                default_key="${key#DEFAULTS_}"
+                DEFAULTS["$default_key"]="$value"
             elif [[ "$key" == "MANDATORY_OPTIONS" ]]; then
                 read -r -a MANDATORY_OPTIONS <<< "$value"
             fi
@@ -39,7 +39,6 @@ load_config() {
     fi
 }
 
-# Funzione per il parsing degli argomenti
 parse_args() {
     while [[ $# -gt 0 ]]; do
         key="$1"
@@ -78,7 +77,6 @@ parse_args() {
     done
 }
 
-# Funzione per la generazione dell'help
 help() {
     script_name=$(basename "$0")
     echo "Usage: $script_name [options]"
@@ -87,7 +85,7 @@ help() {
     for var_name in "${!OPTIONS[@]}"; do
         opts="${OPTIONS[$var_name]}"
         mandatory=""
-        if [[ " ${MANDATORY_OPTIONS[@]} " =~ " $var_name " ]]; then
+        if [[ " ${MANDATORY_OPTIONS[*]} " =~ " $var_name " ]]; then
             mandatory="(mandatory)"
         fi
         echo "  $opts <value>  Set $var_name $mandatory"
@@ -105,7 +103,6 @@ help() {
     echo
 }
 
-# Verifica delle opzioni obbligatorie
 check_mandatory_options() {
     for var_name in "${MANDATORY_OPTIONS[@]}"; do
         if [[ -z "${!var_name}" ]]; then
@@ -116,10 +113,8 @@ check_mandatory_options() {
     done
 }
 
-# Caricamento della configurazione
 load_config
 
-# Parsing degli argomenti
 if [ $# -eq 0 ]; then
     help
     exit 1
@@ -127,21 +122,25 @@ else
     parse_args "$@"
 fi
 
-# Verifica delle opzioni obbligatorie
 check_mandatory_options
 
-# Ciclo dinamico sulle opzioni per stampare solo quelle settate
-# Inizializza una variabile per accumulare l'output
-accumulated_output=""
+output=""
 
-# Ciclo attraverso le opzioni e accumulo il testo
 for var_name in "${!OPTIONS[@]}"; do
     value="${!var_name}"
-    accumulated_output+="$var_name $value\n"
+
+    # Check if there is a default value for this option in the DEFAULTS array
+    default_value="${DEFAULTS[$var_name]}"
+
+    # If a default value exists and the current value is empty, use the default value
+    if [ -n "$default_value" ] && [ -z "$value" ]; then
+        value="$default_value"
+    fi
+
+    output+="$var_name=$value\n"
 done
 
-# Scrivi tutto l'output accumulato nel file
-echo -e "$accumulated_output" > "$SMART_ACTIONS_PARAMETER_OUTPUT_FILE"
+echo -e "$output" > "$SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE"
 
 #echo -e
 #
