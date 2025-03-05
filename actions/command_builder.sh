@@ -1,4 +1,5 @@
 #!/bin/bash
+#Author: Matteo Veroni
 
 if [ -z "$SMART_ACTIONS_CONFIG_FILE" ]; then
     echo "Error: SMART_ACTIONS_CONFIG_FILE not set."

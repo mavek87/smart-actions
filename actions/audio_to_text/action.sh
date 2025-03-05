@@ -1,4 +1,5 @@
 #!/bin/bash
+#Author: Matteo Veroni
 
 export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/audio_to_text"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
@@ -44,7 +45,7 @@ execute_action() {
     DOTOOL_XKB_LAYOUT=it dotool
 }
 
-./command_builder.sh "$@"
+"${SMART_ACTIONS_PROJECT_DIR}/actions/command_builder.sh" "$@"
 result=$?
 
 if [[ $result -ne 0 ]]; then

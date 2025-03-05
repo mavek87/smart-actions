@@ -1,4 +1,5 @@
 #!/bin/bash
+#Author: Matteo Veroni
 
 export SMART_ACTIONS_PROJECT_DIR="/opt/FasterWhisper"
 export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE=/tmp/smart_actions_command_builder_output_file
@@ -55,7 +56,7 @@ help)
   help
   ;;
 *)
-  help # Se il parametro è invalido, mostra l'aiuto
+  help
   exit 1
   ;;
 esac
