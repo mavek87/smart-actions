@@ -5,7 +5,7 @@ export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/audio_t
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
 # TODO: duplicated code except last lines
-read_command_builder_data_output() {
+read_command_action_builder_data_output() {
   declare -A CMD_VARS
 
   while IFS='=' read -r key value; do
@@ -45,14 +45,14 @@ execute_action() {
     DOTOOL_XKB_LAYOUT=it dotool
 }
 
-"${SMART_ACTIONS_PROJECT_DIR}/actions/command_builder.sh" "$@"
+"${SMART_ACTIONS_PROJECT_DIR}/actions/command_action_builder.sh" "$@"
 result=$?
 
 if [[ $result -ne 0 ]]; then
   exit $result
 fi
 
-read_command_builder_data_output
+read_command_action_builder_data_output
 
 execute_action
 
