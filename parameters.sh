@@ -9,6 +9,7 @@ fi
 # Dichiarazione di array dinamici
 declare -A OPTIONS
 declare -A EXAMPLES
+declare -A DEFAULTS # TODO not used yet
 MANDATORY_OPTIONS=()
 
 # Funzione per caricare le opzioni dal file di configurazione

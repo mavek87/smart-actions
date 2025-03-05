@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # File di configurazione di default
-export SMART_ACTIONS_PARAMS_CONFIG_FILE="audio_to_text.params.conf"
+export SMART_ACTIONS_PARAMS_CONFIG_FILE="audio_to_text.conf"
 
 ./parameters.sh "$@"
 
