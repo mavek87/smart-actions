@@ -26,6 +26,7 @@ read_command_action_builder_data_output() {
   audio_device="${CMD_VARS["audio_device"]}"
   audio_sampling_rate="${CMD_VARS["audio_sampling_rate"]}"
   selection_target="${CMD_VARS["selection_target"]}"
+  output_target="${CMD_VARS["output_target"]}"
 }
 
 execute_action() {
@@ -50,16 +51,25 @@ execute_action() {
         ## debug
         #echo "selection: $pre_prompt"
       fi
-    }
-  tgpt -q -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
-    sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
-    mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
-    {
-      for line in "${lines[@]}"; do
-        echo type "$line"
-        echo key Enter
-      done
-    } | DOTOOL_XKB_LAYOUT=it dotool
+    } &&
+    if [[ "$output_target" == "terminal" ]]; then
+      echo "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" &&
+        tgpt -q -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")"
+    elif [[ "$output_target" == "display" ]]; then
+      tgpt -q -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
+        sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
+        mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
+        {
+          for line in "${lines[@]}"; do
+            echo type "$line"
+            echo key Enter
+          done
+        } | DOTOOL_XKB_LAYOUT=it dotool
+    else
+      # TODO è ok? non stampa help...
+      echo "Error: output target '$output_target' does not exist"
+      exit 1
+    fi
 }
 
 "${SMART_ACTIONS_PROJECT_DIR}/actions/command_action_builder.sh" "$@"
