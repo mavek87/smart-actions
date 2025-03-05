@@ -25,6 +25,7 @@ read_command_action_builder_data_output() {
   language="${CMD_VARS["language"]}"
   audio_device="${CMD_VARS["audio_device"]}"
   audio_sampling_rate="${CMD_VARS["audio_sampling_rate"]}"
+  selection_target="${CMD_VARS["selection_target"]}"
 }
 
 execute_action() {
@@ -42,8 +43,15 @@ execute_action() {
   arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   $faster_whisper_cmd &&
-    # TODO: add tgpt parameters
-    tgpt -q "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" > "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
+    pre_prompt="" &&
+    {
+      if [[ "$selection_target" != "none" ]]; then
+        pre_prompt="$(xclip -selection "${selection_target}" -o)"
+        ## debug
+        #echo "selection: $pre_prompt"
+      fi
+    }
+  tgpt -q -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     {
