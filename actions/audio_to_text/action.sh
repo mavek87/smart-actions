@@ -3,6 +3,7 @@
 export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/audio_to_text"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
+# TODO: duplicated code except last lines
 read_command_builder_data_output() {
   declare -A CMD_VARS
 
@@ -53,3 +54,6 @@ fi
 read_command_builder_data_output
 
 execute_action
+
+unset SMART_ACTIONS_CONFIG_FOLDER
+unset SMART_ACTIONS_CONFIG_FILE

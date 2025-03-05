@@ -3,6 +3,7 @@
 export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/dictate_text"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
+# TODO: duplicated code except last lines
 read_command_builder_data_output() {
   declare -A CMD_VARS
 
@@ -41,30 +42,17 @@ execute_action() {
   faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   echo "Starting audio recording..."
+  # TODO: add parameter for audio frequency
   arecord -D "${audio_device}" -f cd -c 1 -r 48000 "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav" &&
     $faster_whisper_cmd &&
     mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text" &&
     {
       for line in "${lines[@]}"; do
-        echo type "$line" ##########
+        echo type "$line"
         echo key Enter
       done
     } | DOTOOL_XKB_LAYOUT=it dotool
 }
-
-#dictate_text() {
-#  echo "DICTATE TEXT"
-#
-#  echo "Starting audio recording and transcription..."
-#  arecord -D hw:3,0 -f cd -c 1 -r 48000 -t wav "${folder}/rec_audio.wav" \
-#    ;
-#  "${folder}/faster-whisper" --vad_method pyannote_v3 --device cuda --model medium --output_format text --task transcribe "${folder}/rec_audio.wav" &&
-#    mapfile -t lines <"${folder}/rec_audio.text" &&
-#    { for line in "${lines[@]}"; do
-#      echo type $line
-#      echo key Enter
-#    done; } | DOTOOL_XKB_LAYOUT=it dotool
-#}
 
 ./command_builder.sh "$@"
 result=$?
@@ -76,3 +64,6 @@ fi
 read_command_builder_data_output
 
 execute_action
+
+unset SMART_ACTIONS_CONFIG_FOLDER
+unset SMART_ACTIONS_CONFIG_FILE
