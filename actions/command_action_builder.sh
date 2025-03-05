@@ -11,6 +11,8 @@ declare -A EXAMPLES
 declare -A DEFAULTS
 MANDATORY_OPTIONS=()
 
+description=""
+
 load_config() {
   if [[ -f "$SMART_ACTIONS_CONFIG_FILE" ]]; then
     while IFS="=" read -r key value; do
@@ -32,6 +34,8 @@ load_config() {
         DEFAULTS["$default_key"]="$value"
       elif [[ "$key" == "MANDATORY_OPTIONS" ]]; then
         read -r -a MANDATORY_OPTIONS <<<"$value"
+      elif [[ "$key" == "DESCRIPTION" ]]; then
+        description="$value"
       fi
     done <"$SMART_ACTIONS_CONFIG_FILE"
   else
@@ -79,7 +83,10 @@ parse_args() {
 }
 
 help() {
-  echo "Usage: $CURRENT_SMART_ACTION_NAME [options]"
+  echo "Action: $CURRENT_SMART_ACTION_NAME"
+  echo "Description": "$description"
+  echo
+  echo "Usage: smart-actions.sh $CURRENT_SMART_ACTION_NAME [options]"
   echo
   echo "Options:"
   for var_name in "${!OPTIONS[@]}"; do
@@ -114,7 +121,6 @@ check_mandatory_options() {
 }
 
 load_config
-
 
 if [ $# -eq 0 ]; then
   help
