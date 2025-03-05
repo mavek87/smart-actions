@@ -59,7 +59,7 @@ parse_args() {
     if [[ $matched -eq 0 ]]; then
       if [[ "$key" == "-h" || "$key" == "--help" ]]; then
         help
-        exit 0
+        exit 1
       else
         echo "Error: unknown parameter ($key)"
         help
