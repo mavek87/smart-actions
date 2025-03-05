@@ -106,7 +106,6 @@ help() {
       echo "  ${EXAMPLES[$key]//\$0/$CURRENT_SMART_ACTION_NAME}"
     done
   fi
-
   echo
 }
 

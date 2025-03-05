@@ -12,6 +12,10 @@ dictate_text() {
   "${SMART_ACTIONS_PROJECT_DIR}/actions/dictate_text/action.sh" "$@"
 }
 
+dictate_command() {
+  "${SMART_ACTIONS_PROJECT_DIR}/actions/dictate_command/action.sh" "$@"
+}
+
 # TODO: this is valid only for commands which record audio, not for the others (eg. audio_to_text)
 end() {
   echo "Stopping the process..."
@@ -48,6 +52,10 @@ audio_to_text)
 dictate_text)
   shift
   dictate_text "$@"
+  ;;
+dictate_command)
+  shift
+  dictate_command "$@"
   ;;
 end)
   end
