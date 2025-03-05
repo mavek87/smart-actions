@@ -1,17 +1,12 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-#if [ -z "$SMART_ACTIONS_CONFIG_FILE" ]; then
-#  echo "Error: SMART_ACTIONS_CONFIG_FILE not set."
-#  exit 1
-#fi
-
 load_config() {
   if [[ -f "$SMART_ACTIONS_CONFIG_FILE" ]]; then
-    while IFS="=" read -r key value; do
+    while IFS="=" read -r key value_rest; do
       # Rimuove spazi iniziali e finali
       key="$(echo "$key" | xargs)"
-      value="$(echo "$value" | xargs)"
+      value="$(echo "$value_rest" | xargs)"
 
       # Ignora righe vuote o commenti
       [[ -z "$key" || "$key" =~ ^# ]] && continue
@@ -30,9 +25,9 @@ load_config() {
       elif [[ "$key" == "DESCRIPTION" ]]; then
         description="$value"
       fi
-    done <"$SMART_ACTIONS_CONFIG_FILE"
+    done < <(grep -v '^#' "$SMART_ACTIONS_CONFIG_FILE")  # Esclude commenti prima di leggere
   else
-    echo "Error: Configuration file '$SMART_ACTIONS_CONFIG_FILE' not found!"
+    echo "Error: Configuration file '$SMART_ACTIONS_CONFIG_FILE' not found"
     exit 1
   fi
 }
@@ -50,7 +45,7 @@ parse_args() {
             eval "$var_name='$1'"
             shift
           else
-            echo "Error: option '$key' requires a value!"
+            echo "Error: option '$key' requires a value"
             echo
             help
             exit 1
@@ -66,8 +61,7 @@ parse_args() {
         help
         exit 0
       else
-        echo "Error: unknown parameter ($key)!"
-        echo
+        echo "Error: unknown parameter ($key)"
         help
         exit 1
       fi
@@ -76,6 +70,7 @@ parse_args() {
 }
 
 help() {
+  echo
   echo "Action: $CURRENT_SMART_ACTION_NAME"
   echo "Description": "$description"
   echo
@@ -105,7 +100,7 @@ help() {
 check_mandatory_options() {
   for var_name in "${MANDATORY_OPTIONS[@]}"; do
     if [[ -z "${!var_name}" ]]; then
-      echo "Error: option '${OPTIONS[$var_name]}' is mandatory!"
+      echo "Error: option '${OPTIONS[$var_name]}' is mandatory"
       help
       exit 1
     fi
