@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Legge la variabile d'ambiente SMART_ACTIONS_PARAMS_CONFIG_FILE
-if [ -z "$SMART_ACTIONS_PARAMS_CONFIG_FILE" ]; then
-    echo "Errore: la variabile d'ambiente SMART_ACTIONS_PARAMS_CONFIG_FILE non è impostata."
+# Legge la variabile d'ambiente SMART_ACTIONS_CONFIG_FILE
+if [ -z "$SMART_ACTIONS_CONFIG_FILE" ]; then
+    echo "Errore: la variabile d'ambiente SMART_ACTIONS_CONFIG_FILE non è impostata."
     exit 1
 fi
 
@@ -14,7 +14,7 @@ MANDATORY_OPTIONS=()
 
 # Funzione per caricare le opzioni dal file di configurazione
 load_config() {
-    if [[ -f "$SMART_ACTIONS_PARAMS_CONFIG_FILE" ]]; then
+    if [[ -f "$SMART_ACTIONS_CONFIG_FILE" ]]; then
         while IFS="=" read -r key value; do
             # Rimuove spazi iniziali e finali
             key="$(echo "$key" | xargs)"
@@ -32,9 +32,9 @@ load_config() {
             elif [[ "$key" == "MANDATORY_OPTIONS" ]]; then
                 read -r -a MANDATORY_OPTIONS <<< "$value"
             fi
-        done < "$SMART_ACTIONS_PARAMS_CONFIG_FILE"
+        done < "$SMART_ACTIONS_CONFIG_FILE"
     else
-        echo "Error: Configuration file '$SMART_ACTIONS_PARAMS_CONFIG_FILE' not found!"
+        echo "Error: Configuration file '$SMART_ACTIONS_CONFIG_FILE' not found!"
         exit 1
     fi
 }

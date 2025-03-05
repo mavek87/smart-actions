@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # File di configurazione di default
-export SMART_ACTIONS_PARAMS_CONFIG_FILE="audio_to_text.conf"
+export SMART_ACTIONS_CONFIG_FILE="audio_to_text.conf"
 
 ./parameters.sh "$@"
 
@@ -14,3 +14,5 @@ else
     # Usa i dati letti
     echo "$dati"
 fi
+
+rm -rf $SMART_ACTIONS_PARAMETER_OUTPUT_FILE 2>/dev/null || true
