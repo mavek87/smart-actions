@@ -1,7 +1,8 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/dictate_text"
+export CURRENT_SMART_ACTION_NAME="dictate_text"
+export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/${CURRENT_SMART_ACTION_NAME}"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
 # TODO: duplicated code except last lines

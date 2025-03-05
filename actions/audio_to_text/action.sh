@@ -1,7 +1,8 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/audio_to_text"
+export CURRENT_SMART_ACTION_NAME="audio_to_text"
+export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/${CURRENT_SMART_ACTION_NAME}"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
 # TODO: duplicated code except last lines
@@ -56,5 +57,6 @@ read_command_action_builder_data_output
 
 execute_action
 
+unset SMART_ACTION_NAME
 unset SMART_ACTIONS_CONFIG_FOLDER
 unset SMART_ACTIONS_CONFIG_FILE
