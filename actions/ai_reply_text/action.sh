@@ -1,7 +1,7 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-export CURRENT_SMART_ACTION_NAME="dictate_text"
+export CURRENT_SMART_ACTION_NAME="ai_reply_text"
 export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/${CURRENT_SMART_ACTION_NAME}"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
@@ -42,13 +42,27 @@ execute_action() {
   arecord -D "${audio_device}" -f cd -c 1 -r 48000 "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   $faster_whisper_cmd &&
-    mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text" &&
+    echo "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
+    # TODO: add tgpt parameters
+    tgpt -q "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
+    sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
+    mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
     {
       for line in "${lines[@]}"; do
         echo type "$line"
         echo key Enter
       done
     } | DOTOOL_XKB_LAYOUT=it dotool
+
+  #    echo "$(tr '\n' ' ' <"${folder}/rec_audio.text")" &&
+  #    tgpt -q "$(cat "${folder}/rec_audio.text")" >"${folder}/ai_reply.txt" &&
+  #    sed -i 's/\r//' "${folder}/ai_reply.txt" &&
+  #    mapfile -t lines <"${folder}/ai_reply.txt" &&
+  #    { for line in "${lines[@]}"; do
+  #      echo type $line
+  #      echo key Enter
+  #    done; } | DOTOOL_XKB_LAYOUT=it dotool
+
 }
 
 "${SMART_ACTIONS_PROJECT_DIR}/actions/command_action_builder.sh" "$@"

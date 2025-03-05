@@ -4,17 +4,32 @@
 export SMART_ACTIONS_PROJECT_DIR="/opt/FasterWhisper"
 export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE=/tmp/smart_actions_command_builder_output_file
 
-audio_to_text() {
-  "${SMART_ACTIONS_PROJECT_DIR}/actions/audio_to_text/action.sh" "$@"
+# Funzione dinamica per invocare gli script
+invoke_action() {
+  action_name="${FUNCNAME[1]}"  # Ottieni il nome della funzione chiamante
+  action_script="${SMART_ACTIONS_PROJECT_DIR}/actions/${action_name}/action.sh"
+
+  # Verifica se lo script esiste
+  if [[ -f "$action_script" ]]; then
+    "$action_script" "$@"  # Passa gli argomenti al comando
+  else
+    echo "Error: Script for action '$action_name' does not exist!"
+    exit 1
+  fi
 }
 
-dictate_text() {
-  "${SMART_ACTIONS_PROJECT_DIR}/actions/dictate_text/action.sh" "$@"
-}
+# Ciclo che esplora la cartella actions e crea le funzioni dinamicamente
+for action_dir in "$SMART_ACTIONS_PROJECT_DIR/actions"/*/; do
+  # Estrai il nome della cartella (rimuovi la parte finale '/')
+  action_name=$(basename "$action_dir")
 
-dictate_command() {
-  "${SMART_ACTIONS_PROJECT_DIR}/actions/dictate_command/action.sh" "$@"
-}
+  # Crea una funzione per ogni cartella in actions
+  eval "
+    $action_name() {
+      invoke_action \"\$@\"
+    }
+  "
+done
 
 # TODO: this is valid only for commands which record audio, not for the others (eg. audio_to_text)
 end() {
@@ -56,6 +71,10 @@ dictate_text)
 dictate_command)
   shift
   dictate_command "$@"
+  ;;
+ai_reply_text)
+  shift
+  ai_reply_text "$@"
   ;;
 end)
   end
