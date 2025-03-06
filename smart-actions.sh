@@ -3,6 +3,11 @@
 
 export SMART_ACTIONS_PROJECT_DIR="/opt/FasterWhisper"
 export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE=/tmp/smart_actions_command_builder_output_file
+export SMART_ACTIONS_COLOR_RED="\e[31m"
+export SMART_ACTIONS_COLOR_GREEN="\e[32m"
+export SMART_ACTIONS_COLOR_YELLOW="\e[33m"
+export SMART_ACTIONS_COLOR_BLUE="\e[34m"
+export SMART_ACTIONS_COLOR_RESET="\e[0m"
 
 # Funzione dinamica per invocare gli script
 invoke_action() {
@@ -13,7 +18,7 @@ invoke_action() {
   if [[ -f "$action_script" ]]; then
     "$action_script" "$@" # Passa gli argomenti al comando
   else
-    echo "Error: Script for action '$action_name' does not exist!"
+    echo -e "${SMART_ACTIONS_COLOR_RED}Error: Script for action '$action_name' does not exist${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 }
@@ -40,9 +45,9 @@ end() {
 
 help() {
   echo
-  echo "Usage: $0 {action_name|end|help}"
+  echo -e "${SMART_ACTIONS_COLOR_BLUE}Usage:${SMART_ACTIONS_COLOR_RESET} $0 {action_name|end|help}"
   echo
-  echo "Available actions:"
+  echo -e "${SMART_ACTIONS_COLOR_BLUE}Available actions:${SMART_ACTIONS_COLOR_RESET}"
 
   for action_dir in "$SMART_ACTIONS_PROJECT_DIR/actions"/*/; do
     action_name=$(basename "$action_dir")
@@ -57,11 +62,12 @@ help() {
 
     echo "  $action_name - $action_description"
   done
-  echo "Other commands:"
+  echo
+  echo -e "${SMART_ACTIONS_COLOR_BLUE}Other commands:${SMART_ACTIONS_COLOR_RESET}"
   echo "  end - Stop the recording and ongoing processes."
   echo "  help - Show this help message."
   echo
-  echo "Examples:"
+  echo -e "${SMART_ACTIONS_COLOR_GREEN}Examples:${SMART_ACTIONS_COLOR_RESET}"
   echo "  ./smart-actions.sh dictate_text - Start audio recording and convert it to text (stop the recording with CTRL+C or end)."
   echo "  ./smart-actions.sh end - Stop the recording if it's in progress."
   echo "  ./smart-actions.sh audio_to_text -f /home/file.wav"
@@ -87,7 +93,7 @@ end | -e | --end)
       help
       exit 1
     else
-      echo "Error: Unknown command '$1'"
+      echo -e "${SMART_ACTIONS_COLOR_RED}Error: Unknown command '$1'${SMART_ACTIONS_COLOR_RESET}"
       help
       exit 1
     fi
@@ -95,4 +101,10 @@ end | -e | --end)
   ;;
 esac
 
-unset $SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE
+unset SMART_ACTIONS_COLOR_RED
+unset SMART_ACTIONS_COLOR_GREEN
+unset SMART_ACTIONS_COLOR_YELLOW
+unset SMART_ACTIONS_COLOR_BLUE
+unset SMART_ACTIONS_COLOR_RESET
+unset SMART_ACTIONS_PROJECT_DIR
+unset SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE

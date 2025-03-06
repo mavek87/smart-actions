@@ -35,13 +35,13 @@ execute_action() {
 
   if [[ "$output_destination" != "terminal" && "$output_destination" != "display" ]]; then
     # TODO è ok? non stampa help...
-    echo "Error: output target '$output_destination' does not exist"
+    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output target '$output_destination' does not exist${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 
   if [[ "$output_format" != "text" && "$output_format" != "string" ]]; then
     # TODO è ok? non stampa help...
-    echo "Error: output format '$output_format' does not exist"
+    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output format '$output_format' does not exist${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 

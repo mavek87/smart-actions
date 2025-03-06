@@ -34,13 +34,13 @@ execute_action() {
 
   if [[ "$output_format" != "text" && "$output_format" != "string" ]]; then
     # TODO è ok? non stampa help...
-    echo "Error: output format '$output_format' does not exist"
+    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output format '$output_format' does not exist${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 
   if [[ "$output_terminator" != "none" && "$output_terminator" != "Enter" ]]; then
     # TODO è ok? non stampa help...
-    echo "Error: output terminator '$output_terminator' does not exist"
+    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output terminator '$output_terminator' does not exist${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 

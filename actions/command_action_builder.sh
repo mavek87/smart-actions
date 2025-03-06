@@ -27,7 +27,7 @@ load_config() {
       fi
     done < <(grep -v '^#' "$SMART_ACTIONS_CONFIG_FILE") # Esclude commenti prima di leggere
   else
-    echo "Error: Configuration file '$SMART_ACTIONS_CONFIG_FILE' not found"
+    echo -e "${SMART_ACTIONS_COLOR_RED}Error: Configuration file '$SMART_ACTIONS_CONFIG_FILE' not found${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 }
@@ -45,7 +45,7 @@ parse_args() {
             eval "$var_name='$1'"
             shift
           else
-            echo "Error: option '$key' requires a value"
+            echo -e "${SMART_ACTIONS_COLOR_RED}Error: option '$key' requires a value${SMART_ACTIONS_COLOR_RESET}"
             echo
             help
             exit 1
@@ -61,7 +61,7 @@ parse_args() {
         help
         exit 1
       else
-        echo "Error: unknown parameter ($key)"
+        echo -e "${SMART_ACTIONS_COLOR_RED}Error: unknown parameter ($key)${SMART_ACTIONS_COLOR_RESET}"
         help
         exit 1
       fi
@@ -71,12 +71,12 @@ parse_args() {
 
 help() {
   echo
-  echo "Action: $CURRENT_SMART_ACTION_NAME"
-  echo "Description": "$description"
+  echo -e "${SMART_ACTIONS_COLOR_BLUE}Action:${SMART_ACTIONS_COLOR_RESET} $CURRENT_SMART_ACTION_NAME"
+  echo -e "${SMART_ACTIONS_COLOR_BLUE}Description:${SMART_ACTIONS_COLOR_RESET} $description"
   echo
-  echo "Usage: smart-actions.sh $CURRENT_SMART_ACTION_NAME [options]"
+  echo -e "${SMART_ACTIONS_COLOR_BLUE}Usage:${SMART_ACTIONS_COLOR_RESET} smart-actions.sh $CURRENT_SMART_ACTION_NAME [options]"
   echo
-  echo "Options:"
+  echo -e "${SMART_ACTIONS_COLOR_BLUE}Options:${SMART_ACTIONS_COLOR_RESET}"
   for var_name in "${!OPTIONS[@]}"; do
     opts="${OPTIONS[$var_name]}"
     mandatory=""
@@ -89,7 +89,7 @@ help() {
   # Stampa gli esempi solo se esistono
   if [[ ${#EXAMPLES[@]} -gt 0 ]]; then
     echo
-    echo "Examples:"
+    echo -e "${SMART_ACTIONS_COLOR_GREEN}Examples:${SMART_ACTIONS_COLOR_RESET}"
     for key in "${!EXAMPLES[@]}"; do
       echo "  ${EXAMPLES[$key]//\$0/$CURRENT_SMART_ACTION_NAME}"
     done
@@ -100,7 +100,7 @@ help() {
 check_mandatory_options() {
   for var_name in "${MANDATORY_OPTIONS[@]}"; do
     if [[ -z "${!var_name}" ]]; then
-      echo "Error: option '${OPTIONS[$var_name]}' is mandatory"
+      echo -e "${SMART_ACTIONS_COLOR_RED}Error: option '${OPTIONS[$var_name]}' is mandatory${SMART_ACTIONS_COLOR_RESET}"
       help
       exit 1
     fi
