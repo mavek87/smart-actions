@@ -25,7 +25,7 @@ load_config() {
       elif [[ "$key" == "DESCRIPTION" ]]; then
         description="$value"
       fi
-    done < <(grep -v '^#' "$SMART_ACTIONS_CONFIG_FILE")  # Esclude commenti prima di leggere
+    done < <(grep -v '^#' "$SMART_ACTIONS_CONFIG_FILE") # Esclude commenti prima di leggere
   else
     echo "Error: Configuration file '$SMART_ACTIONS_CONFIG_FILE' not found"
     exit 1
