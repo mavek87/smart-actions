@@ -32,6 +32,10 @@ load_config() {
   fi
 }
 
+print_config() {
+  cat "$SMART_ACTIONS_CONFIG_FILE"
+}
+
 parse_args() {
   while [[ $# -gt 0 ]]; do
     key="$1"
@@ -60,6 +64,9 @@ parse_args() {
       if [[ "$key" == "-h" || "$key" == "--help" ]]; then
         help
         exit 1
+      elif [[ "$key" == "--print-config" ]]; then
+        print_config
+        exit 1
       else
         echo -e "${SMART_ACTIONS_COLOR_RED}Error: unknown parameter ($key)${SMART_ACTIONS_COLOR_RESET}"
         help
@@ -85,6 +92,7 @@ help() {
     fi
     echo "  $opts <value>  Set $var_name $mandatory"
   done
+  echo "  --print-config | Print the configuration file for this action"
 
   # Stampa gli esempi solo se esistono
   if [[ ${#EXAMPLES[@]} -gt 0 ]]; then
