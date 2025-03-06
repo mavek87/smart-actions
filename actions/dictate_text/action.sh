@@ -40,7 +40,7 @@ execute_action() {
 
   if [[ "$output_terminator" != "none" && "$output_terminator" != "Enter" ]]; then
     # TODO è ok? non stampa help...
-    echo "Error: output format '$output_terminator' does not exist"
+    echo "Error: output terminator '$output_terminator' does not exist"
     exit 1
   fi
 
@@ -62,21 +62,11 @@ execute_action() {
           echo key Enter
         fi
       done
+      if [[ "$output_terminator" != "none" ]]; then
+        echo key "$output_terminator"
+      fi
     } | DOTOOL_XKB_LAYOUT=it dotool
-
-  # TODO: verificare non mi sembra funzioni
-  if [[ "$output_terminator" != "none" ]]; then
-    echo key "$output_terminator"
-  fi
 }
-
-# TODO: capire le diffrenze
-# OLD CODE FOR STRING
-#$faster_whisper_cmd &&
-#  echo type "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
-#  DOTOOL_XKB_LAYOUT=it dotool &&
-#  echo key Enter |
-#  DOTOOL_XKB_LAYOUT=it dotool
 
 "${SMART_ACTIONS_PROJECT_DIR}/actions/command_action_builder.sh" "$@"
 result=$?
