@@ -25,10 +25,24 @@ read_command_action_builder_data_output() {
   language="${CMD_VARS["language"]}"
   audio_device="${CMD_VARS["audio_device"]}"
   audio_sampling_rate="${CMD_VARS["audio_sampling_rate"]}"
+  output_format="${CMD_VARS["output_format"]}"
+  output_terminator="${CMD_VARS["output_terminator"]}"
 }
 
 execute_action() {
   echo "$CURRENT_SMART_ACTION_NAME"
+
+  if [[ "$output_format" != "text" && "$output_format" != "string" ]]; then
+    # TODO è ok? non stampa help...
+    echo "Error: output format '$output_format' does not exist"
+    exit 1
+  fi
+
+  if [[ "$output_terminator" != "none" && "$output_terminator" != "Enter" ]]; then
+    # TODO è ok? non stampa help...
+    echo "Error: output format '$output_terminator' does not exist"
+    exit 1
+  fi
 
   faster_whisper_cmd="${SMART_ACTIONS_PROJECT_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
 
@@ -46,10 +60,25 @@ execute_action() {
     {
       for line in "${lines[@]}"; do
         echo type "$line"
-        echo key Enter
+        if [[ "$output_format" == "text" ]]; then
+          echo key Enter
+        fi
       done
     } | DOTOOL_XKB_LAYOUT=it dotool
+
+  # TODO: verificare non mi sembra funzioni
+  if [[ "$output_terminator" != "none" ]]; then
+    echo key "$output_terminator"
+  fi
 }
+
+# TODO: capire le diffrenze
+# OLD CODE FOR STRING
+#$faster_whisper_cmd &&
+#  echo type "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
+#  DOTOOL_XKB_LAYOUT=it dotool &&
+#  echo key Enter |
+#  DOTOOL_XKB_LAYOUT=it dotool
 
 "${SMART_ACTIONS_PROJECT_DIR}/actions/command_action_builder.sh" "$@"
 result=$?
