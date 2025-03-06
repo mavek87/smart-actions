@@ -39,6 +39,7 @@ end() {
 }
 
 help() {
+  echo
   echo "Usage: $0 {action_name|end|help}"
   echo
   echo "Available actions:"
@@ -82,9 +83,14 @@ end | -e | --end)
     shift
     "$action" "$@"
   else
-    echo "Error: Unknown command '$1'"
-    help
-    exit 1
+    if [[ -z "$(echo "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')" ]]; then
+      help
+      exit 1
+    else
+      echo "Error: Unknown command '$1'"
+      help
+      exit 1
+    fi
   fi
   ;;
 esac
