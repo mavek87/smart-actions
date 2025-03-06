@@ -36,11 +36,9 @@ execute_action() {
   echo "$CURRENT_SMART_ACTION_NAME"
 
   faster_whisper_cmd="${SMART_ACTIONS_PROJECT_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
-
   if [[ -n "$language" ]]; then
     faster_whisper_cmd+=" --language $language"
   fi
-
   faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   cp "$input_file" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav" &&

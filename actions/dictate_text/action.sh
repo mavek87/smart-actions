@@ -45,11 +45,9 @@ execute_action() {
   fi
 
   faster_whisper_cmd="${SMART_ACTIONS_PROJECT_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
-
   if [[ -n "$language" ]]; then
     faster_whisper_cmd+=" --language $language"
   fi
-
   faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   echo "Starting audio recording..."
