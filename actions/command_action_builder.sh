@@ -1,6 +1,21 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
+declare -A OPTIONS
+declare -a OPTIONS_ORDERED_KEYS
+declare -A EXAMPLES
+declare -A DEFAULTS
+MANDATORY_OPTIONS=()
+description=""
+
+add_option() {
+  local key="$1"
+  local opt_value="$2"
+
+  OPTIONS["$key"]="$opt_value"
+  OPTIONS_ORDERED_KEYS+=("$key")
+}
+
 load_config() {
   if [[ -f "$SMART_ACTIONS_CONFIG_FILE" ]]; then
     while IFS="=" read -r key value_rest; do
@@ -12,8 +27,8 @@ load_config() {
       [[ -z "$key" || "$key" =~ ^# ]] && continue
 
       if [[ "$key" == OPTIONS_* ]]; then
-        var_name="${key#OPTIONS_}"
-        OPTIONS["$var_name"]="$value"
+        option_key="${key#OPTIONS_}"
+        add_option "$option_key" "$value"
       elif [[ "$key" == EXAMPLES_* ]]; then
         example_key="${key#EXAMPLES_}"
         EXAMPLES["$example_key"]="$value"
@@ -42,11 +57,11 @@ parse_args() {
     shift
     matched=0
 
-    for var_name in "${!OPTIONS[@]}"; do
-      for opt in ${OPTIONS[$var_name]}; do
+    for option_key in "${OPTIONS_ORDERED_KEYS[@]}"; do
+      for opt in ${OPTIONS[$option_key]}; do
         if [[ "$key" == "$opt" ]]; then
           if [[ -n "$1" && "$1" != -* ]]; then
-            eval "$var_name='$1'"
+            eval "$option_key='$1'"
             shift
           else
             echo -e "${SMART_ACTIONS_COLOR_RED}Error: option '$key' requires a value${SMART_ACTIONS_COLOR_RESET}"
@@ -84,13 +99,14 @@ help() {
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Usage:${SMART_ACTIONS_COLOR_RESET} smart-actions.sh $CURRENT_SMART_ACTION_NAME [options]"
   echo
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Options:${SMART_ACTIONS_COLOR_RESET}"
-  for var_name in "${!OPTIONS[@]}"; do
-    opts="${OPTIONS[$var_name]}"
+
+  for option_key in "${OPTIONS_ORDERED_KEYS[@]}"; do
+    opt="${OPTIONS[$option_key]}"
     mandatory=""
-    if [[ " ${MANDATORY_OPTIONS[*]} " =~ " $var_name " ]]; then
+    if [[ " ${MANDATORY_OPTIONS[*]} " =~ " $option_key " ]]; then
       mandatory="(mandatory)"
     fi
-    echo "  $opts <value>  Set $var_name $mandatory"
+    echo "  $opt <value>  Set $option_key $mandatory"
   done
   echo "  --print-config | Print the configuration file for this action"
 
@@ -106,20 +122,14 @@ help() {
 }
 
 check_mandatory_options() {
-  for var_name in "${MANDATORY_OPTIONS[@]}"; do
-    if [[ -z "${!var_name}" ]]; then
-      echo -e "${SMART_ACTIONS_COLOR_RED}Error: option '${OPTIONS[$var_name]}' is mandatory${SMART_ACTIONS_COLOR_RESET}"
+  for option_key in "${MANDATORY_OPTIONS[@]}"; do
+    if [[ -z "${!option_key}" ]]; then
+      echo -e "${SMART_ACTIONS_COLOR_RED}Error: option '${OPTIONS[$option_key]}' is mandatory${SMART_ACTIONS_COLOR_RESET}"
       help
       exit 1
     fi
   done
 }
-
-declare -A OPTIONS
-declare -A EXAMPLES
-declare -A DEFAULTS
-MANDATORY_OPTIONS=()
-description=""
 
 load_config
 
@@ -128,18 +138,19 @@ parse_args "$@"
 check_mandatory_options
 
 output=""
-for var_name in "${!OPTIONS[@]}"; do
-  value="${!var_name}"
+for opt_key in "${OPTIONS_ORDERED_KEYS[@]}"; do
+  # Extract the passed param value expanding the param key name
+  value="${!opt_key}"
 
   # Check if there is a default value for this option in the DEFAULTS array
-  default_value="${DEFAULTS[$var_name]}"
+  default_value="${DEFAULTS[$opt_key]}"
 
-  # If a default value exists and the current value is empty, use the default value
+  # If a default value exists and the current passed value is empty, use the default value
   if [ -n "$default_value" ] && [ -z "$value" ]; then
     value="$default_value"
   fi
 
-  output+="$var_name=$value\n"
+  output+="$opt_key=$value\n"
 done
 
 echo -e "$output" >"$SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE"
