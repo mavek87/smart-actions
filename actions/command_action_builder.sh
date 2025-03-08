@@ -67,7 +67,6 @@ parse_args() {
             echo -e "${SMART_ACTIONS_COLOR_RED}Error: option '$key' requires a value${SMART_ACTIONS_COLOR_RESET}"
             echo
             help
-            exit 1
           fi
           matched=1
           break 2
@@ -78,14 +77,12 @@ parse_args() {
     if [[ $matched -eq 0 ]]; then
       if [[ "$key" == "-h" || "$key" == "--help" ]]; then
         help
-        exit 1
       elif [[ "$key" == "--print-config" ]]; then
         print_config
         exit 1
       else
         echo -e "${SMART_ACTIONS_COLOR_RED}Error: unknown parameter ($key)${SMART_ACTIONS_COLOR_RESET}"
         help
-        exit 1
       fi
     fi
   done
@@ -119,6 +116,8 @@ help() {
     done
   fi
   echo
+
+  exit 1
 }
 
 check_mandatory_options() {
@@ -126,7 +125,6 @@ check_mandatory_options() {
     if [[ -z "${!option_key}" ]]; then
       echo -e "${SMART_ACTIONS_COLOR_RED}Error: option '${OPTIONS[$option_key]}' is mandatory${SMART_ACTIONS_COLOR_RESET}"
       help
-      exit 1
     fi
   done
 }

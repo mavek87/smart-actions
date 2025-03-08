@@ -3,6 +3,7 @@
 
 export SMART_ACTIONS_PROJECT_DIR="/opt/FasterWhisper"
 export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE=/tmp/smart_actions_command_builder_output_file
+export SMART_ACTIONS_COMMAND_RESULT=/tmp/smart_actions_command_result
 export SMART_ACTIONS_COLOR_RED="\e[31m"
 export SMART_ACTIONS_COLOR_GREEN="\e[32m"
 export SMART_ACTIONS_COLOR_YELLOW="\e[33m"
@@ -71,6 +72,7 @@ help() {
   echo "  ./smart-actions.sh dictate_text - Start audio recording and convert it to text (stop the recording with CTRL+C or end)."
   echo "  ./smart-actions.sh end - Stop the recording if it's in progress."
   echo "  ./smart-actions.sh audio_to_text -f /home/file.wav"
+  exit 1
 }
 
 mkdir -p /tmp
@@ -88,14 +90,14 @@ end | -e | --end)
     action="$1"
     shift
     "$action" "$@"
+    # Exit using the invoked action exit code (0 ok, otherwise error)
+    exit $?
   else
     if [[ -z "$(echo "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')" ]]; then
       help
-      exit 1
     else
       echo -e "${SMART_ACTIONS_COLOR_RED}Error: Unknown command '$1'${SMART_ACTIONS_COLOR_RESET}"
       help
-      exit 1
     fi
   fi
   ;;
@@ -107,4 +109,5 @@ unset SMART_ACTIONS_COLOR_YELLOW
 unset SMART_ACTIONS_COLOR_BLUE
 unset SMART_ACTIONS_COLOR_RESET
 unset SMART_ACTIONS_PROJECT_DIR
+unset SMART_ACTIONS_COMMAND_RESULT
 unset SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE
