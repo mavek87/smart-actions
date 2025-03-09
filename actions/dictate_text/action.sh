@@ -60,6 +60,8 @@ execute_action() {
         echo type "$line"
         if [[ "$output_format" == "text" ]]; then
           echo key Enter
+        elif [[ "$output_format" == "string" ]]; then
+          echo key Space
         fi
       done
       if [[ "$output_terminator" != "none" ]]; then
