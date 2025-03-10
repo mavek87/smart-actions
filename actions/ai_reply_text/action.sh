@@ -75,9 +75,16 @@ execute_action() {
         mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
         {
           for line in "${lines[@]}"; do
-            echo type "$line"
+            # echo type "$line"
+            # TODO: evaluate if typedelay and typehold should be dynamic values
+            echo "typedelay 2
+                    typehold 1
+                    type $line"
             if [[ "$output_format" == "text" ]]; then
               echo key Enter
+              # TODO: evaluate if the next commented elif is needed!
+              #            elif [[ "$output_format" == "string" ]]; then
+              #              echo key Space
             fi
           done
         } | DOTOOL_XKB_LAYOUT=it dotool

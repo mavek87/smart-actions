@@ -43,7 +43,11 @@ execute_action() {
 
   cp "$input_file" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav" &&
     $faster_whisper_cmd &&
-    echo type "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
+    #    echo type "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
+    # TODO: evaluate if typedelay and typehold should be dynamic values
+    echo "typedelay 2
+            typehold 1
+            type $(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
     DOTOOL_XKB_LAYOUT=it dotool
 }
 

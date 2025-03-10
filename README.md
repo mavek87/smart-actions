@@ -54,3 +54,6 @@ curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash 
 
 ## Author
 Matteo Veroni
+
+TORNA TUTTE I DISPOSITIVI AUDIO:
+arecord -l | grep -P '^\w+\s\d+: ' | sed 's/^[^:]*: \([^,]*\).*/\1/'

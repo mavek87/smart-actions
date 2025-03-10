@@ -57,7 +57,11 @@ execute_action() {
     mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text" &&
     {
       for line in "${lines[@]}"; do
-        echo type "$line"
+        # echo type "$line"
+        # TODO: evaluate if typedelay and typehold should be dynamic values
+        echo "typedelay 2
+        typehold 1
+        type $line"
         if [[ "$output_format" == "text" ]]; then
           echo key Enter
         elif [[ "$output_format" == "string" ]]; then
