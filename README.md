@@ -12,7 +12,7 @@ https://github.com/Purfview/whisper-standalone-win/releases
 curl https://github.com/Purfview/whisper-standalone-win/releases/download/Faster-Whisper-XXL/Faster-Whisper-XXL_r245.2_linux.7z 
 ```
 
-In the future maybe also Whisper.cpp could be supported:
+In the future maybe also **Whisper.cpp** could be supported:
 
 https://github.com/ggerganov/whisper.cpp
 
