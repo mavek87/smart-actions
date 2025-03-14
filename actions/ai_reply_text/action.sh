@@ -1,7 +1,7 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-set -x
+# set -x
 
 script_dir="$(dirname "$(realpath "$0")")"
 script_folder_name="$(basename "$script_dir")"
