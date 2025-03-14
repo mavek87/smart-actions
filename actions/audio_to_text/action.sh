@@ -1,7 +1,9 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-export CURRENT_SMART_ACTION_NAME="audio_to_text"
+script_dir="$(dirname "$(realpath "$0")")"
+script_folder_name="$(basename "$script_dir")"
+export CURRENT_SMART_ACTION_NAME="$script_folder_name"
 export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/${CURRENT_SMART_ACTION_NAME}"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 

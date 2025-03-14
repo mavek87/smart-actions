@@ -1,7 +1,9 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-export CURRENT_SMART_ACTION_NAME="ai_reply_text"
+script_dir="$(dirname "$(realpath "$0")")"
+script_folder_name="$(basename "$script_dir")"
+export CURRENT_SMART_ACTION_NAME="$script_folder_name"
 export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/${CURRENT_SMART_ACTION_NAME}"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
@@ -63,7 +65,7 @@ execute_action() {
 
   echo "Starting audio recording..."
   #  arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
-  ffmpeg -f alsa -i "${audio_device}" -ac 1  -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k  -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
+  ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
 
   tgpt_whole_text_param=""
   if [[ "$output_format" == "text" ]]; then
