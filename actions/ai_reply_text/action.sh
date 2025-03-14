@@ -66,11 +66,11 @@ execute_action() {
     if [[ "$output_destination" == "terminal" ]]; then
 
       echo "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" &&
-        tgpt -q -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")"
+        tgpt -q -w -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")"
 
     elif [[ "$output_destination" == "display" ]]; then
 
-      tgpt -q -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
+      tgpt -q -w -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
         sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
         mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/ai_reply.txt" &&
         {
