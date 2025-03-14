@@ -1,6 +1,8 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
+set -x
+
 script_dir="$(dirname "$(realpath "$0")")"
 script_folder_name="$(basename "$script_dir")"
 export CURRENT_SMART_ACTION_NAME="$script_folder_name"
@@ -50,10 +52,10 @@ execute_action() {
     exit 1
   fi
 
-  if [[ "$output_format" != "text" && "$output_format" != "string" ]]; then
+  if [[ "$output_format" != "text" && "$output_format" != "string" && "$output_format" != "code" ]]; then
     # TODO is it ok? No complete help print...
     echo -e "${SMART_ACTIONS_COLOR_RED}Error: output format '$output_format' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'text', 'string'${SMART_ACTIONS_COLOR_RESET}"
+    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'text', 'string', 'code'${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 
@@ -67,9 +69,13 @@ execute_action() {
   #  arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
   ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
 
-  tgpt_whole_text_param=""
+  tgpt_quiet_param="-q"
+  tgpt_output_format=""
   if [[ "$output_format" == "text" ]]; then
-    tgpt_whole_text_param="-w"
+    tgpt_output_format="-w"
+  elif [[ "$output_format" == "code" ]]; then
+    tgpt_output_format="-c"
+    tgpt_quiet_param="" # no quiet -q for code otherwhise the code doesn't work...
   fi
 
   $faster_whisper_cmd &&
@@ -83,10 +89,12 @@ execute_action() {
     } &&
     if [[ "$output_destination" == "terminal" ]]; then
       echo "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" &&
-        tgpt -q $tgpt_whole_text_param --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")"
+        # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it won't work
+        tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")"
 
     elif [[ "$output_destination" == "display" ]]; then
-      tgpt -q $tgpt_whole_text_param --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
+      # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it won't work
+      tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
         sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
         mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
         {
