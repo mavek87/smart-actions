@@ -22,7 +22,7 @@ read_command_action_builder_data_output() {
 
   input_file="${CMD_VARS["input_file"]}"
   if [ ! -f "$input_file" ]; then
-    # TODO è ok? non stampa help...
+    # TODO is it ok? No complete help print...
     echo -e "${SMART_ACTIONS_COLOR_RED}Error: input file '$input_file' does not exist${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi

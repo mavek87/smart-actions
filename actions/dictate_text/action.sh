@@ -33,14 +33,16 @@ execute_action() {
   echo "$CURRENT_SMART_ACTION_NAME"
 
   if [[ "$output_format" != "text" && "$output_format" != "string" ]]; then
-    # TODO è ok? non stampa help...
+    # TODO is it ok? No complete help print...
     echo -e "${SMART_ACTIONS_COLOR_RED}Error: output format '$output_format' does not exist${SMART_ACTIONS_COLOR_RESET}"
+    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'text', 'string'${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 
-  if [[ "$output_terminator" != "none" && "$output_terminator" != "Enter" ]]; then
-    # TODO è ok? non stampa help...
+  if [[ "$output_terminator" != "None" && "$output_terminator" != "Enter" ]]; then
+    # TODO is it ok? No complete help print...
     echo -e "${SMART_ACTIONS_COLOR_RED}Error: output terminator '$output_terminator' does not exist${SMART_ACTIONS_COLOR_RESET}"
+    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'none', 'Enter'${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 
@@ -68,7 +70,7 @@ execute_action() {
           echo key Space
         fi
       done
-      if [[ "$output_terminator" != "none" ]]; then
+      if [[ "$output_terminator" != "None" ]]; then
         echo key "$output_terminator"
       fi
     } | DOTOOL_XKB_LAYOUT=it dotool

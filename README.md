@@ -51,6 +51,8 @@ curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash 
 ### TODO
 
 - solve all the todos...
+- passing tgpt models
+- smart action generate image to clipboard
 
 ## Author
 Matteo Veroni
