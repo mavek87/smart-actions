@@ -53,7 +53,8 @@ execute_action() {
   faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   echo "Starting audio recording..."
-  arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
+  # arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
+  ffmpeg -f alsa -i "${audio_device}" -ar "${audio_sampling_rate}" -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
 
   $faster_whisper_cmd &&
     mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text" &&
