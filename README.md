@@ -62,9 +62,36 @@ curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash 
 
 ## Useful commands
 
-convert mp3 to wav:
+### record an audio file:
+```bash
+ffmpeg -f alsa -i default -y output.wav
+ffmpeg -f alsa -i hw:3,0 output.wav
+```
+
+alternative:
+```bash
+  arecord -D hw:3,0 -f cd -c 1 -r 44000 output.wav
+```
+
+### play an audio file
+```bash
+ffplay -v 0 -nodisp -autoexit dictate-text-on.mp3
+```
+
+alternative:
+```bash
+aplay audio.wav
+```
+
+### convert mp3 to wav:
 ```bash
 ffmpeg -i input.mp3 -ar 16000 -ac 1 -c:a pcm_s16le output.wav
+```
+
+### run whisper.cpp
+
+```bash
+./build/bin/whisper-cli -f output.wav -m models/ggml-medium.bin -l auto
 ```
 
 ## Author
