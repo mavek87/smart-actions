@@ -18,10 +18,10 @@ https://github.com/ggerganov/whisper.cpp
 
 but this is not being used yet in the scripts
 
-### 2) Arecord
+### 2) FFMPEG
 
 ```bash
-sudo apt install alsa-utils
+sudo apt install ffmpeg
 ```
 
 ### 3) Dotool
@@ -96,8 +96,3 @@ ffmpeg -i input.mp3 -ar 16000 -ac 1 -c:a pcm_s16le output.wav
 ## Author
 
 Matteo Veroni
-
----------------
-
-TORNA TUTTE I DISPOSITIVI AUDIO:
-arecord -l | grep -P '^\w+\s\d+: ' | sed 's/^[^:]*: \([^,]*\).*/\1/'
