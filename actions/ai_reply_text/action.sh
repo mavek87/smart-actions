@@ -52,10 +52,10 @@ execute_action() {
     exit 1
   fi
 
-  if [[ "$output_format" != "text" && "$output_format" != "string" && "$output_format" != "code" ]]; then
+  if [[ "$output_format" != "text" && "$output_format" != "string" && "$output_format" != "code_string" && "$output_format" != "code_text" ]]; then
     # TODO is it ok? No complete help print...
     echo -e "${SMART_ACTIONS_COLOR_RED}Error: output format '$output_format' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'text', 'string', 'code'${SMART_ACTIONS_COLOR_RESET}"
+    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'text', 'string', 'code_string', 'code_text'${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 
@@ -73,7 +73,7 @@ execute_action() {
   tgpt_output_format=""
   if [[ "$output_format" == "text" ]]; then
     tgpt_output_format="-w"
-  elif [[ "$output_format" == "code" ]]; then
+  elif [[ "$output_format" == "code_string" ||  "$output_format" == "code_text" ]]; then
     tgpt_output_format="-c"
     tgpt_quiet_param="" # no quiet -q for code otherwhise the code doesn't work...
   fi
@@ -104,7 +104,7 @@ execute_action() {
             echo "typedelay 2
                     typehold 1
                     type $line"
-            if [[ "$output_format" == "text" ]]; then
+            if [[ "$output_format" == "text" || "$output_format" == "code_text" ]]; then
               echo key Enter
               # TODO: evaluate if the next commented elif is needed!
               #            elif [[ "$output_format" == "string" ]]; then
