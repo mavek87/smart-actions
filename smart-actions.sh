@@ -40,7 +40,8 @@ done
 # TODO: this is valid only for commands which record audio, not for the others (eg. audio_to_text)
 end() {
   echo "Stopping the process..."
-  pkill -f "arecord" # Uccide il processo di registrazione (se in esecuzione)
+  # pkill -f "arecord"
+  pkill -f "ffmpeg"
 }
 
 help() {

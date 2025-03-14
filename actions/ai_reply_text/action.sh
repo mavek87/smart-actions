@@ -84,9 +84,9 @@ execute_action() {
         tgpt -q $tgpt_whole_text_param --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")"
 
     elif [[ "$output_destination" == "display" ]]; then
-      tgpt -q $tgpt_whole_text_param --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/file_ai_reply.txt" &&
-        sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/file_ai_reply.txt" &&
-        mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/file_ai_reply.txt" &&
+      tgpt -q $tgpt_whole_text_param --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
+        sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
+        mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
         {
           for line in "${lines[@]}"; do
             # echo type "$line"
