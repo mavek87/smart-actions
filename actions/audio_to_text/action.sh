@@ -37,19 +37,19 @@ read_command_action_builder_data_output() {
 execute_action() {
   echo "$CURRENT_SMART_ACTION_NAME"
 
-  faster_whisper_cmd="${SMART_ACTIONS_PROJECT_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
+  faster_whisper_cmd="${FASTER_WHISPER_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
   if [[ -n "$language" ]]; then
     faster_whisper_cmd+=" --language $language"
   fi
-  faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
+  faster_whisper_cmd+=" ${FASTER_WHISPER_DIR}/rec_audio.wav"
 
-  cp "$input_file" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav" &&
+  cp "$input_file" "${FASTER_WHISPER_DIR}/rec_audio.wav" &&
     $faster_whisper_cmd &&
     #    echo type "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
     # TODO: evaluate if typedelay and typehold should be dynamic values
     echo "typedelay 2
-            typehold 1
-            type $(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" |
+            typehold 2
+            type $(tr '\n' ' ' <"${FASTER_WHISPER_DIR}/rec_audio.text")" |
     DOTOOL_XKB_LAYOUT=it dotool
 }
 

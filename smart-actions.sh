@@ -1,8 +1,19 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-export SMART_ACTIONS_PROJECT_DIR="/opt/FasterWhisper"
+SMART_ACTIONS_PROJECT_DIR=$(dirname "$0")
+echo "Smart actions project dir: $SMART_ACTIONS_PROJECT_DIR"
+export SMART_ACTIONS_PROJECT_DIR
+
+source "$SMART_ACTIONS_PROJECT_DIR/settings.conf"
+
+echo "Faster whisper dir: $FASTER_WHISPER_DIR"
+echo "Nerd dictation dir: $NERD_DICTATATION_DIR"
+echo "Piper dir: $PIPER_DIR"
+echo ""
+
 export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE=/tmp/smart_actions_command_builder_output_file
+
 export SMART_ACTIONS_COLOR_RED="\e[31m"
 export SMART_ACTIONS_COLOR_GREEN="\e[32m"
 export SMART_ACTIONS_COLOR_YELLOW="\e[33m"
@@ -103,10 +114,15 @@ end | -e | --end)
   ;;
 esac
 
+unset SMART_ACTIONS_PROJECT_DIR
+unset FASTER_WHISPER_DIR
+unset NERD_DICTATATION_DIR
+unset PIPER_DIR
+
+unset SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE
+
 unset SMART_ACTIONS_COLOR_RED
 unset SMART_ACTIONS_COLOR_GREEN
 unset SMART_ACTIONS_COLOR_YELLOW
 unset SMART_ACTIONS_COLOR_BLUE
 unset SMART_ACTIONS_COLOR_RESET
-unset SMART_ACTIONS_PROJECT_DIR
-unset SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE

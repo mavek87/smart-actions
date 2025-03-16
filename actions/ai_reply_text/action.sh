@@ -33,10 +33,18 @@ read_command_action_builder_data_output() {
   selection_target="${CMD_VARS["selection_target"]}"
   output_destination="${CMD_VARS["output_destination"]}"
   output_format="${CMD_VARS["output_format"]}"
+  output_audio_voice="${CMD_VARS["output_audio_voice"]}"
 }
 
 execute_action() {
   echo "$CURRENT_SMART_ACTION_NAME"
+
+  if [[ "${output_audio_voice}" != "true" && "${output_audio_voice}" != "false" ]]; then
+    # TODO is it ok? No complete help print...
+    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output target '$output_audio_voice' does not exist${SMART_ACTIONS_COLOR_RESET}"
+    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'true', 'false'${SMART_ACTIONS_COLOR_RESET}"
+    exit 1
+  fi
 
   if [[ "$ai_provider" != "duckduckgo" && "$ai_provider" != "phind" && "$ai_provider" != "ollama" && "$ai_provider" != "pollinations" ]]; then
     # TODO is it ok? No complete help print...
@@ -73,7 +81,7 @@ execute_action() {
   tgpt_output_format=""
   if [[ "$output_format" == "text" ]]; then
     tgpt_output_format="-w"
-  elif [[ "$output_format" == "code_string" ||  "$output_format" == "code_text" ]]; then
+  elif [[ "$output_format" == "code_string" || "$output_format" == "code_text" ]]; then
     tgpt_output_format="-c"
     tgpt_quiet_param="" # no quiet -q for code otherwhise the code doesn't work...
   fi
@@ -88,21 +96,41 @@ execute_action() {
       fi
     } &&
     if [[ "$output_destination" == "terminal" ]]; then
-      echo "$(tr '\n' ' ' <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" &&
-        # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it won't work
-        tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")"
+      echo "$(tr '\n' ' ' <"${FASTER_WHISPER_DIR}/rec_audio.text")" &&
+        # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it wont work
+        tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${FASTER_WHISPER_DIR}/rec_audio.text")"
 
     elif [[ "$output_destination" == "display" ]]; then
-      # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it won't work
-      tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text")" >"${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
-        sed -i 's/\r//' "${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
-        mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/reply_ai.txt" &&
+      # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it wont work
+      tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${FASTER_WHISPER_DIR}/rec_audio.text")" >"${FASTER_WHISPER_DIR}/reply_ai.txt"
+      sed -i 's/\r//' "${FASTER_WHISPER_DIR}/reply_ai.txt" # Remove \r characters
+
+      if [[ "$output_audio_voice" == "true" ]]; then
+        (
+          if [[ -n "$language" ]]; then
+            PIPER_LANG="${language}"
+          else
+            PIPER_LANG="en" # default language is english
+          fi
+
+          PIPER_MODEL_FOR_LANGUAGE=$(eval "ls ${PIPER_DIR} | grep '^${PIPER_LANG}.*\.onnx$' | head -n 1")
+
+          if [[ $PIPER_MODEL_FOR_LANGUAGE != "" ]]; then
+            sed 's/[*#]//g' "${FASTER_WHISPER_DIR}/reply_ai.txt" >"${FASTER_WHISPER_DIR}/reply_ai_audio.txt" # Remove * and # characters
+            cat "${FASTER_WHISPER_DIR}/reply_ai_audio.txt" | "${PIPER_DIR}/piper" --model "${PIPER_DIR}/${PIPER_MODEL_FOR_LANGUAGE}" --output-raw | ffmpeg -f s16le -ar 22050 -ac 1 -i - -f alsa default
+          else
+            echo "Error: No ONNX Piper model found for language '$PIPER_MODEL_FOR_LANGUAGE' in piper folder $PIPER_DIR"
+          fi
+        ) &
+      fi
+
+      mapfile -t lines <"${FASTER_WHISPER_DIR}/reply_ai.txt" &&
         {
           for line in "${lines[@]}"; do
             # echo type "$line"
             # TODO: evaluate if typedelay and typehold should be dynamic values
             echo "typedelay 2
-                    typehold 1
+                    typehold 2
                     type $line"
             if [[ "$output_format" == "text" || "$output_format" == "code_text" ]]; then
               echo key Enter

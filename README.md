@@ -4,7 +4,7 @@ Project to perform several actions like vocal dictation, vocal query to AI chatb
 
 ## Installation
 
-### 1) Faster Whisper
+### 1) Faster Whisper (Speech to text)
 
 https://github.com/Purfview/whisper-standalone-win/releases
 
@@ -46,13 +46,17 @@ usermod -a -G input $USER
 sudo reboot
 ```
 
-### 4) TGPT
+### 4) TGPT (AI in terminal)
 
 https://github.com/aandrew-me/tgpt
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
 ```
+
+### 5) Piper (Text to speech)
+
+https://github.com/rhasspy/piper
 
 ## Roadmap
 
@@ -62,27 +66,32 @@ curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash 
 ## Useful commands
 
 ### record an audio file:
+
 ```bash
 ffmpeg -f alsa -i default -y output.wav
 ffmpeg -f alsa -i hw:3,0 output.wav
 ```
 
 alternative:
+
 ```bash
   arecord -D hw:3,0 -f cd -c 1 -r 44000 output.wav
 ```
 
 ### play an audio file
+
 ```bash
 ffplay -v 0 -nodisp -autoexit dictate-text-on.mp3
 ```
 
 alternative:
+
 ```bash
 aplay audio.wav
 ```
 
 ### convert mp3 to wav:
+
 ```bash
 ffmpeg -i input.mp3 -ar 16000 -ac 1 -c:a pcm_s16le output.wav
 ```

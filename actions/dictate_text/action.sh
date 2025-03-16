@@ -41,31 +41,31 @@ execute_action() {
     exit 1
   fi
 
-  if [[ "$output_terminator" != "None" && "$output_terminator" != "Enter" ]]; then
+  if [[ "$output_terminator" != "none" && "$output_terminator" != "enter" ]]; then
     # TODO is it ok? No complete help print...
     echo -e "${SMART_ACTIONS_COLOR_RED}Error: output terminator '$output_terminator' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'none', 'Enter'${SMART_ACTIONS_COLOR_RESET}"
+    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'none', 'enter'${SMART_ACTIONS_COLOR_RESET}"
     exit 1
   fi
 
-  faster_whisper_cmd="${SMART_ACTIONS_PROJECT_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
+  faster_whisper_cmd="${FASTER_WHISPER_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
   if [[ -n "$language" ]]; then
     faster_whisper_cmd+=" --language $language"
   fi
-  faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
+  faster_whisper_cmd+=" ${FASTER_WHISPER_DIR}/rec_audio.mp3"
 
   echo "Starting audio recording..."
-  # arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
+  # arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${FASTER_WHISPER_DIR}/rec_audio.wav"
   ffmpeg -f alsa -i "${audio_device}" -ac 1  -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k  -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
 
   $faster_whisper_cmd &&
-    mapfile -t lines <"${SMART_ACTIONS_PROJECT_DIR}/rec_audio.text" &&
+    mapfile -t lines <"${FASTER_WHISPER_DIR}/rec_audio.text" &&
     {
       for line in "${lines[@]}"; do
         # echo type "$line"
         # TODO: evaluate if typedelay and typehold should be dynamic values
         echo "typedelay 2
-        typehold 1
+        typehold 2
         type $line"
         if [[ "$output_format" == "text" ]]; then
           echo key Enter
@@ -73,7 +73,7 @@ execute_action() {
           echo key Space
         fi
       done
-      if [[ "$output_terminator" != "None" ]]; then
+      if [[ "$output_terminator" != "none" ]]; then
         echo key "$output_terminator"
       fi
     } | DOTOOL_XKB_LAYOUT=it dotool
