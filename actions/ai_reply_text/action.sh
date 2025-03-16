@@ -92,11 +92,12 @@ execute_action() {
 
     echo "Starting audio recording..."
     #  arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
-    ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
+    ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3" >/dev/null 2>&1
 
-    $faster_whisper_cmd
+    eval "$faster_whisper_cmd"
   fi
 
+  echo "The AI is elaborating a response..."
   pre_prompt=""
   {
     if [[ "$selection_target" != "none" ]]; then
@@ -125,7 +126,7 @@ execute_action() {
 
         if [[ $PIPER_MODEL_FOR_LANGUAGE != "" ]]; then
           sed 's/[*#]//g' "${OUTPUT_DIR}/reply_ai.txt" >"${OUTPUT_DIR}/reply_ai_audio.txt" # Remove * and # characters
-          cat "${OUTPUT_DIR}/reply_ai_audio.txt" | "${PIPER_DIR}/piper" --model "${PIPER_DIR}/${PIPER_MODEL_FOR_LANGUAGE}" --output-raw | ffmpeg -f s16le -ar 22050 -ac 1 -i - -f alsa default
+          cat "${OUTPUT_DIR}/reply_ai_audio.txt" | "${PIPER_DIR}/piper" --model "${PIPER_DIR}/${PIPER_MODEL_FOR_LANGUAGE}" --output-raw | ffmpeg -f s16le -ar 22050 -ac 1 -i - -f alsa default >/dev/null 2>&1
         else
           echo "Error: No ONNX Piper model found for language '$PIPER_MODEL_FOR_LANGUAGE' in piper folder $PIPER_DIR"
         fi
