@@ -52,12 +52,14 @@ done
 end() {
   echo "Stopping the process..."
   # pkill -f "arecord"
+  sleep 0.5
   pkill -f "ffmpeg"
+  eval "${NERD_DICTATATION_DIR}/nerd-dictation end"
 }
 
 end_output_audio_vocal() {
   echo "Stopping the process..."
-    pkill -f "piper"
+  pkill -f "piper"
 }
 
 help() {
