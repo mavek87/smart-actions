@@ -55,6 +55,11 @@ end() {
   pkill -f "ffmpeg"
 }
 
+end_output_audio_vocal() {
+  echo "Stopping the process..."
+    pkill -f "piper"
+}
+
 help() {
   echo
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Usage:${SMART_ACTIONS_COLOR_RESET} $0 {action_name|end|help}"
@@ -77,11 +82,13 @@ help() {
   echo
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Other commands:${SMART_ACTIONS_COLOR_RESET}"
   echo "  end - Stop the recording and ongoing processes."
+  echo "  end_output_audio_vocal - Stop the output audio vocal"
   echo "  help - Show this help message."
   echo
   echo -e "${SMART_ACTIONS_COLOR_GREEN}Examples:${SMART_ACTIONS_COLOR_RESET}"
   echo "  ./smart-actions.sh dictate_text - Start audio recording and convert it to text (stop the recording with CTRL+C or end)."
-  echo "  ./smart-actions.sh end - Stop the recording if it's in progress."
+  echo "  ./smart-actions.sh end"
+  echo "  ./smart-actions.sh end_output_audio_vocal"
   echo "  ./smart-actions.sh audio_to_text -f /home/file.wav"
   exit 1
 }
@@ -95,6 +102,9 @@ help | -h | --help)
   ;;
 end | -e | --end)
   end
+  ;;
+end_output_audio_vocal | -ev | --end_output_audio_vocal)
+  end_output_audio_vocal
   ;;
 *)
   if declare -f "$1" >/dev/null; then
