@@ -60,10 +60,13 @@ execute_action() {
 
     echo "Starting audio recording..."
     # arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${FASTER_WHISPER_DIR}/rec_audio.wav"
-    ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
+    ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3" >/dev/null 2>&1
 
-    $faster_whisper_cmd &&
-      mapfile -t lines <"${FASTER_WHISPER_DIR}/rec_audio.text" &&
+    echo "Converting the recorded audio to text..."
+    eval "$faster_whisper_cmd"
+
+    echo "Writing the text..."
+    mapfile -t lines <"${FASTER_WHISPER_DIR}/rec_audio.text" &&
       {
         for line in "${lines[@]}"; do
           # echo type "$line"
