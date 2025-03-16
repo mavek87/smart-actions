@@ -37,7 +37,7 @@ read_command_action_builder_data_output() {
 }
 
 execute_action() {
-  echo "$CURRENT_SMART_ACTION_NAME"
+  echo "Execute: $CURRENT_SMART_ACTION_NAME"
 
   if [[ "${output_audio_voice}" != "true" && "${output_audio_voice}" != "false" ]]; then
     # TODO is it ok? No complete help print...
