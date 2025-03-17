@@ -60,6 +60,7 @@ https://github.com/rhasspy/piper
 
 ## Roadmap
 
+- audio_to_text needs a destination (output_file/display)
 - solve all the todos...
 - smart action generate image to clipboard
 
