@@ -59,7 +59,7 @@ execute_action() {
     if [[ -n "$output_file" ]]; then
       "${command[@]}" --output-file "$output_file" <<<"$input"
     else
-      "${command[@]}" --output-raw <<<"$input" | ffmpeg -f s16le -ar 22050 -ac 1 -i - -f alsa default
+      "${command[@]}" --output-raw <<<"$input" | ffmpeg -f s16le -ar 22050 -ac 1 -i - -f alsa default >/dev/null 2>&1
     fi
   else
     echo "${SMART_ACTIONS_COLOR_RED}Error: No piper model specified and no model found in piper dir $PIPER_DIR for language $PIPER_LANG${SMART_ACTIONS_COLOR_RESET}"
