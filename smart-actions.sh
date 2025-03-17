@@ -12,7 +12,8 @@ echo "Nerd dictation dir: $NERD_DICTATATION_DIR"
 echo "Piper dir: $PIPER_DIR"
 echo ""
 
-export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE=/tmp/smart_actions_command_builder_output_file
+UUID=$(uuidgen)
+export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE="/tmp/smart_actions_command_builder_output_file_${UUID}"
 
 export SMART_ACTIONS_COLOR_RED="\e[31m"
 export SMART_ACTIONS_COLOR_GREEN="\e[32m"

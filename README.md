@@ -62,7 +62,6 @@ https://github.com/rhasspy/piper
 
 - solve all the todos...
 - smart action generate image to clipboard
-- find a safer alternative to save the builder output in a file (it's not good for concurrent execution)
 
 ## Useful commands
 
