@@ -162,7 +162,3 @@ fi
 read_command_action_builder_data_output
 
 execute_action
-
-unset SMART_ACTION_NAME
-unset SMART_ACTIONS_CONFIG_FOLDER
-unset SMART_ACTIONS_CONFIG_FILE
