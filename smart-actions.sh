@@ -2,15 +2,9 @@
 #Author: Matteo Veroni
 
 SMART_ACTIONS_PROJECT_DIR="$(dirname "$(realpath "$0")")"
-echo "Smart actions project dir: $SMART_ACTIONS_PROJECT_DIR"
 export SMART_ACTIONS_PROJECT_DIR
 
 source "$SMART_ACTIONS_PROJECT_DIR/settings.conf"
-
-echo "Faster whisper dir: $FASTER_WHISPER_DIR"
-echo "Nerd dictation dir: $NERD_DICTATATION_DIR"
-echo "Piper dir: $PIPER_DIR"
-echo ""
 
 UUID=$(uuidgen)
 export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE="/tmp/smart_actions_command_builder_output_file_${UUID}"
@@ -34,20 +28,6 @@ invoke_action() {
     exit 1
   fi
 }
-
-# Ciclo che esplora la cartella actions e crea le funzioni dinamicamente
-for action_dir in "$SMART_ACTIONS_PROJECT_DIR/actions"/*/; do
-  # Estrai il nome della cartella (rimuovi la parte finale '/')
-  action_name=$(basename "$action_dir")
-  # echo $action_name
-
-  # Crea una funzione per ogni cartella in actions
-  eval "
-    $action_name() {
-      invoke_action \"\$@\"
-    }
-  "
-done
 
 # TODO: this is valid only for commands which record audio, not for the others (eg. audio_to_text)
 end() {
@@ -85,7 +65,8 @@ help() {
   echo
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Other commands:${SMART_ACTIONS_COLOR_RESET}"
   echo "  end - Stop the recording and ongoing processes."
-  echo "  end_output_audio_vocal - Stop the output audio vocal"
+  echo "  end_output_audio_vocal - Stop the output audio vocal."
+  echo "  print_settings - Print the smart actions script settings."
   echo "  help - Show this help message."
   echo
   echo -e "${SMART_ACTIONS_COLOR_GREEN}Examples:${SMART_ACTIONS_COLOR_RESET}"
@@ -96,12 +77,38 @@ help() {
   exit 1
 }
 
+print_settings () {
+   echo ""
+   echo "Smart actions project dir: $SMART_ACTIONS_PROJECT_DIR"
+   echo "Faster whisper dir: $FASTER_WHISPER_DIR"
+   echo "Nerd dictation dir: $NERD_DICTATATION_DIR"
+   echo "Piper dir: $PIPER_DIR"
+   echo ""
+}
+
 mkdir -p /tmp
 touch "$SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE"
+
+# Ciclo che esplora la cartella actions e crea le funzioni dinamicamente
+for action_dir in "$SMART_ACTIONS_PROJECT_DIR/actions"/*/; do
+  # Estrai il nome della cartella (rimuovi la parte finale '/')
+  action_name=$(basename "$action_dir")
+  # echo $action_name
+
+  # Crea una funzione per ogni cartella in actions
+  eval "
+    $action_name() {
+      invoke_action \"\$@\"
+    }
+  "
+done
 
 case "$1" in
 help | -h | --help)
   help
+  ;;
+print_settings | -ps | --print_settings)
+  print_settings
   ;;
 end | -e | --end)
   end
