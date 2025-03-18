@@ -2,6 +2,7 @@
 #Author: Matteo Veroni
 
 SMART_ACTIONS_SCRIPT_NAME=$(basename "$0")
+export SMART_ACTIONS_SCRIPT_NAME
 SMART_ACTIONS_PROJECT_DIR="$(dirname "$(realpath "$0")")"
 export SMART_ACTIONS_PROJECT_DIR
 
