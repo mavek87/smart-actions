@@ -14,34 +14,6 @@ source "${script_dir}/../commons.sh"
 execute_action() {
   echo "Execute: $CURRENT_SMART_ACTION_NAME"
 
-  if [[ "${output_audio_voice}" != "true" && "${output_audio_voice}" != "false" ]]; then
-    # TODO is it ok? No complete help print...
-    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output target '$output_audio_voice' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'true', 'false'${SMART_ACTIONS_COLOR_RESET}"
-    exit 1
-  fi
-
-  if [[ "$ai_provider" != "duckduckgo" && "$ai_provider" != "phind" && "$ai_provider" != "ollama" && "$ai_provider" != "pollinations" ]]; then
-    # TODO is it ok? No complete help print...
-    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output target '$output_destination' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'duckduckgo', 'phind', 'ollama', 'pollinations'${SMART_ACTIONS_COLOR_RESET}"
-    exit 1
-  fi
-
-  if [[ "$output_destination" != "terminal" && "$output_destination" != "display" ]]; then
-    # TODO is it ok? No complete help print...
-    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output target '$output_destination' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'terminal', 'display'${SMART_ACTIONS_COLOR_RESET}"
-    exit 1
-  fi
-
-  if [[ "$output_format" != "text" && "$output_format" != "string" && "$output_format" != "code_string" && "$output_format" != "code_text" ]]; then
-    # TODO is it ok? No complete help print...
-    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output format '$output_format' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'text', 'string', 'code_string', 'code_text'${SMART_ACTIONS_COLOR_RESET}"
-    exit 1
-  fi
-
   tgpt_quiet_param="-q"
   tgpt_output_format=""
   if [[ "$output_format" == "text" ]]; then
@@ -146,5 +118,10 @@ selection_target="${CMD_ARGS["selection_target"]}"
 output_destination="${CMD_ARGS["output_destination"]}"
 output_format="${CMD_ARGS["output_format"]}"
 output_audio_voice="${CMD_ARGS["output_audio_voice"]}"
+
+validate_supported_value "output_audio_voice" "$output_audio_voice" "true" "false"
+validate_supported_value "ai_provider" "$ai_provider" "duckduckgo" "phind" "ollama" "pollinations"
+validate_supported_value "output_destination" "$output_destination" "terminal" "display"
+validate_supported_value "output_format" "$output_format" "text" "string" "code_string" "code_text"
 
 execute_action

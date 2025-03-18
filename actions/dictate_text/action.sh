@@ -12,20 +12,6 @@ source "${script_dir}/../commons.sh"
 execute_action() {
   echo "Execute: $CURRENT_SMART_ACTION_NAME"
 
-  if [[ "$output_format" != "text" && "$output_format" != "string" ]]; then
-    # TODO is it ok? No complete help print...
-    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output format '$output_format' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'text', 'string'${SMART_ACTIONS_COLOR_RESET}"
-    exit 1
-  fi
-
-  if [[ "$output_terminator" != "none" && "$output_terminator" != "enter" ]]; then
-    # TODO is it ok? No complete help print...
-    echo -e "${SMART_ACTIONS_COLOR_RED}Error: output terminator '$output_terminator' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    echo -e "${SMART_ACTIONS_COLOR_RED}The possible values are: 'none', 'enter'${SMART_ACTIONS_COLOR_RESET}"
-    exit 1
-  fi
-
   if [[ -n "$language" ]]; then
     eval "${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language}"
   else
@@ -81,5 +67,8 @@ audio_device="${CMD_ARGS["audio_device"]}"
 audio_sampling_rate="${CMD_ARGS["audio_sampling_rate"]}"
 output_format="${CMD_ARGS["output_format"]}"
 output_terminator="${CMD_ARGS["output_terminator"]}"
+
+validate_supported_value "output_terminator" "$output_terminator" "none" "enter"
+validate_supported_value "output_format" "$output_format" "text" "string"
 
 execute_action

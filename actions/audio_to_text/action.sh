@@ -12,13 +12,6 @@ source "${script_dir}/../commons.sh"
 execute_action() {
   echo "Execute: $CURRENT_SMART_ACTION_NAME"
 
-  input_file="${CMD_ARGS["input_file"]}"
-  if [ ! -f "$input_file" ]; then
-    # TODO is it ok? No complete help print...
-    echo -e "${SMART_ACTIONS_COLOR_RED}Error: input file '$input_file' does not exist${SMART_ACTIONS_COLOR_RESET}"
-    exit 1
-  fi
-
   faster_whisper_cmd="${FASTER_WHISPER_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
   if [[ -n "$language" ]]; then
     faster_whisper_cmd+=" --language $language"
@@ -46,5 +39,8 @@ load_args_from_built_command
 model="${CMD_ARGS["model"]}"
 task="${CMD_ARGS["task"]}"
 language="${CMD_ARGS["language"]}"
+input_file="${CMD_ARGS["input_file"]}"
+
+validate_file_exists "$input_file"
 
 execute_action
