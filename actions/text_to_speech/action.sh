@@ -50,6 +50,7 @@ execute_action() {
   exit 0
 }
 
+# TODO use the same method as common. Probably SMART_ACTIONS_PROJECT_DIR is useless
 "${SMART_ACTIONS_PROJECT_DIR}/actions/command_action_builder.sh" "$@"
 result=$?
 

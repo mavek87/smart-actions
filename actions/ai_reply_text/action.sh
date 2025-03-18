@@ -84,15 +84,15 @@ execute_action() {
   else
     OUTPUT_DIR="${FASTER_WHISPER_DIR}"
 
-    faster_whisper_cmd="${SMART_ACTIONS_PROJECT_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
+    faster_whisper_cmd="${FASTER_WHISPER_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
     if [[ -n "$language" ]]; then
       faster_whisper_cmd+=" --language $language"
     fi
-    faster_whisper_cmd+=" ${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
+    faster_whisper_cmd+=" ${FASTER_WHISPER_DIR}/rec_audio.mp3"
 
     echo "Starting audio recording..."
-    #  arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.wav"
-    ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${SMART_ACTIONS_PROJECT_DIR}/rec_audio.mp3"
+    #  arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${FASTER_WHISPER_DIR}/rec_audio.wav"
+    ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${FASTER_WHISPER_DIR}/rec_audio.mp3"
 
     eval "$faster_whisper_cmd"
   fi
