@@ -20,7 +20,7 @@ execute_action() {
     tgpt_output_format="-w"
   elif [[ "$output_format" == "code_string" || "$output_format" == "code_text" ]]; then
     tgpt_output_format="-c"
-    tgpt_quiet_param="" # no quiet -q for code otherwhise the code doesn't work...
+    tgpt_quiet_param="" # no quiet -q for code otherwise the code doesn't work...
   fi
 
   OUTPUT_DIR=""
