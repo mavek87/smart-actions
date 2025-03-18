@@ -1,6 +1,7 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
+SMART_ACTIONS_SCRIPT_NAME=$(basename "$0")
 SMART_ACTIONS_PROJECT_DIR="$(dirname "$(realpath "$0")")"
 export SMART_ACTIONS_PROJECT_DIR
 
@@ -70,10 +71,10 @@ help() {
   echo "  help - Show this help message."
   echo
   echo -e "${SMART_ACTIONS_COLOR_GREEN}Examples:${SMART_ACTIONS_COLOR_RESET}"
-  echo "  ./smart-actions.sh dictate_text - Start audio recording and convert it to text (stop the recording with CTRL+C or end)."
-  echo "  ./smart-actions.sh end"
-  echo "  ./smart-actions.sh end_output_audio_vocal"
-  echo "  ./smart-actions.sh audio_to_text -f /home/file.wav"
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} dictate_text - Start audio recording and convert it to text (stop the recording with CTRL+C or end)."
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} end"
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} end_output_audio_vocal"
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} audio_to_text -f /home/file.wav"
   exit 1
 }
 
