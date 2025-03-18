@@ -1,7 +1,7 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-SMART_ACTIONS_PROJECT_DIR=$(dirname "$0")
+SMART_ACTIONS_PROJECT_DIR="$(dirname "$(realpath "$0")")"
 echo "Smart actions project dir: $SMART_ACTIONS_PROJECT_DIR"
 export SMART_ACTIONS_PROJECT_DIR
 
