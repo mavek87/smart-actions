@@ -1,16 +1,16 @@
 #!/bin/bash
 #Author: Matteo Veroni
 
-script_dir="$(dirname "$(realpath "$0")")"
-script_folder_name="$(basename "$script_dir")"
-export CURRENT_SMART_ACTION_NAME="$script_folder_name"
-export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/${CURRENT_SMART_ACTION_NAME}"
-export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
+# set -x
 
-source "${script_dir}/../commons.sh"
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+SCRIPT_NAME="$(basename "$SCRIPT_DIR")"
+export SMART_ACTIONS_CONFIG_FILE="${SCRIPT_DIR}/action.conf"
+
+source "${SCRIPT_DIR}/../commons.sh"
 
 execute_action() {
-  echo "Execute: $CURRENT_SMART_ACTION_NAME"
+  echo "Execute: $SCRIPT_NAME"
 
   if [[ -n "$language" ]]; then
     eval "${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language}"
