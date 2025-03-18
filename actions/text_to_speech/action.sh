@@ -9,26 +9,7 @@ export CURRENT_SMART_ACTION_NAME="$script_folder_name"
 export SMART_ACTIONS_CONFIG_FOLDER="${SMART_ACTIONS_PROJECT_DIR}/actions/${CURRENT_SMART_ACTION_NAME}"
 export SMART_ACTIONS_CONFIG_FILE="${SMART_ACTIONS_CONFIG_FOLDER}/action.conf"
 
-# TODO: duplicated code except last lines
-read_command_action_builder_data_output() {
-  declare -A CMD_VARS
-
-  while IFS='=' read -r key value; do
-    key=$(echo "$key" | tr -d '[:space:]')
-    value=$(echo "$value" | tr -d '[:space:]')
-
-    [[ -z "$key" ]] && continue
-
-    CMD_VARS["$key"]="${value:-""}"
-  done < <(tr -d '\r' <"$SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE")
-
-  rm -rf "$SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE" 2>/dev/null || true
-
-  text="${CMD_VARS["text"]}"
-  language="${CMD_VARS["language"]}"
-  model="${CMD_VARS["model"]}"
-  output_file="${CMD_VARS["output_file"]}"
-}
+source "${script_dir}/../commons.sh"
 
 execute_action() {
   echo "Execute: $CURRENT_SMART_ACTION_NAME"
@@ -59,7 +40,7 @@ execute_action() {
     if [[ -n "$output_file" ]]; then
       "${command[@]}" --output-file "$output_file" <<<"$input"
     else
-      "${command[@]}" --output-raw <<<"$input" | ffmpeg -f s16le -ar 22050 -ac 1 -i - -f alsa default >/dev/null 2>&1
+      "${command[@]}" --output-raw <<<"$input" | ffmpeg -f s16le -ar 22050 -ac 1 -i - -f alsa default
     fi
   else
     echo "${SMART_ACTIONS_COLOR_RED}Error: No piper model specified and no model found in piper dir $PIPER_DIR for language $PIPER_LANG${SMART_ACTIONS_COLOR_RESET}"
@@ -76,6 +57,11 @@ if [[ $result -ne 0 ]]; then
   exit $result
 fi
 
-read_command_action_builder_data_output
+load_args_from_built_command
+
+text="${CMD_ARGS["text"]}"
+language="${CMD_ARGS["language"]}"
+model="${CMD_ARGS["model"]}"
+output_file="${CMD_ARGS["output_file"]}"
 
 execute_action
