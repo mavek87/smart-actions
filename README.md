@@ -54,6 +54,14 @@ https://github.com/aandrew-me/tgpt
 curl -sSL https://raw.githubusercontent.com/aandrew-me/tgpt/main/install | bash -s /usr/local/bin
 ```
 
+### setup with ollama:
+
+```bash
+tgpt --provider openai --url "http://localhost:11434/v1/chat/completions" --model "llama3:latest" "hi how are you?"
+```
+
+(export the arguments in .bashrc to avoid typing them every time:)
+
 ### 5) Piper (Text to speech)
 
 https://github.com/rhasspy/piper
