@@ -32,7 +32,16 @@ execute_action() {
   fi
 
   if [[ -n "$PIPER_MODEL" ]]; then
-    input="${text:-$(cat)}"
+    #    input="${text:-$(cat)}"
+
+    if [[ -n "$text" ]]; then
+      # Sostituisce i newline con una virgola (o altra punteggiatura)
+      input=$(echo "$text" | tr '\n' ',') # Sostituisce \n con virgola
+    else
+      # Se non viene passato un argomento, legge da stdin
+      input=$(cat)
+    fi
+
     command=("${PIPER_DIR}/piper" --model "$PIPER_MODEL")
 
     if [[ -n "$output_file" ]]; then
