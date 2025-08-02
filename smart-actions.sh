@@ -45,6 +45,34 @@ end_output_audio_vocal() {
   pkill -f "piper"
 }
 
+# OUTPUT EXAMPLE:
+#   Yeti Nano (plughw:1,0)
+#   HD-Audio Generic (plughw:2,0)
+#   HD-Audio Generic (plughw:2,2)
+#   Jabra EVOLVE LINK MS (plughw:3,0)
+#   HD Pro Webcam C920 (plughw:4,0)
+list_audio_devices() {
+  LANG=C arecord -l | awk '
+    /^card [0-9]+:/ {
+      card_num = $2
+      sub(/:$/, "", card_num)
+      match($0, /\[[^]]*\]/)
+      card_name = substr($0, RSTART+1, RLENGTH-2)
+
+      line = $0
+      while (match(line, /device [0-9]+:/)) {
+        dev_str = substr(line, RSTART, RLENGTH)
+        split(dev_str, parts, " ")
+        device_num = parts[2]
+        sub(/:$/, "", device_num)
+        print "" card_name " (plughw:" card_num "," device_num ")"
+
+        line = substr(line, RSTART + RLENGTH)
+      }
+    }
+  '
+}
+
 help() {
   echo
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Usage:${SMART_ACTIONS_COLOR_RESET} $0 {action_name|end|help}"
@@ -68,6 +96,7 @@ help() {
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Other commands:${SMART_ACTIONS_COLOR_RESET}"
   echo "  end - Stop the recording and ongoing processes."
   echo "  end_output_audio_vocal - Stop the output audio vocal."
+  echo "  list_audio_devices - Stop the output audio vocal."
   echo "  print_settings - Print the smart actions script settings."
   echo "  help - Show this help message."
   echo
@@ -75,6 +104,7 @@ help() {
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} dictate_text - Start audio recording and convert it to text (stop the recording with CTRL+C or end)."
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} end"
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} end_output_audio_vocal"
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} list_audio_devices"
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} audio_to_text -f /home/file.wav"
   exit 1
 }
