@@ -42,6 +42,7 @@ end() {
   eval "${NERD_DICTATATION_DIR}/nerd-dictation end"
 }
 
+# TODO: how about putting this in the end function and removing this one??? (Maybe not, because this is used to stop just the piper output audio vocal)
 end_output_audio_vocal() {
   echo "Stopping the process..."
   pkill -f "piper"

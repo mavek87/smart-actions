@@ -25,13 +25,21 @@ https://github.com/ggerganov/whisper.cpp
 
 but this is not being used yet in the scripts
 
-### 2) FFMPEG
+### 2) NerdDictation (Dictation)
+
+https://github.com/ideasman42/nerd-dictation
+
+### Issues
+
+https://github.com/ideasman42/nerd-dictation/issues/20
+
+### 3) FFMPEG
 
 ```bash
 sudo apt install ffmpeg
 ```
 
-### 3) Dotool
+### 4) Dotool
 
 https://sr.ht/~geb/dotool/
 
@@ -53,7 +61,7 @@ usermod -a -G input $USER
 sudo reboot
 ```
 
-### 4) TGPT (AI in terminal)
+### 5) TGPT (AI in terminal)
 
 https://github.com/aandrew-me/tgpt
 
@@ -69,7 +77,7 @@ tgpt --provider openai --url "http://localhost:11434/v1/chat/completions" --mode
 
 (export the arguments in .bashrc to avoid typing them every time:)
 
-### 5) Piper (Text to speech)
+### 6) Piper (Text to speech)
 
 https://github.com/rhasspy/piper
 

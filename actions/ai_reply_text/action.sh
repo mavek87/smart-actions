@@ -25,7 +25,12 @@ execute_action() {
   if [[ -n "$language" ]]; then
     OUTPUT_DIR="${NERD_DICTATATION_DIR}"
 
-    eval "${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language} --output STDOUT > ${OUTPUT_DIR}/rec_audio.text"
+    # eval "${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language} --output STDOUT > ${OUTPUT_DIR}/rec_audio.text"
+
+    # Hardcoded temporary solution for my Jabra EVOLVE LINK MS mono device TODO: generalize it!
+    nerd_dictate_cmd="${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language} --pulse-device-name alsa_input.usb-GN_Netcom_A_S_Jabra_EVOLVE_LINK_MS_00004F9F0F5A09-00.mono-fallback --output STDOUT > ${OUTPUT_DIR}/rec_audio.text"
+    echo "executing: ${nerd_dictate_cmd}. Use the end command to stop it."
+    eval "${nerd_dictate_cmd}"
   else
     OUTPUT_DIR="${FASTER_WHISPER_DIR}"
 
