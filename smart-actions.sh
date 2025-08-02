@@ -7,6 +7,7 @@ SMART_ACTIONS_PROJECT_DIR="$(dirname "$(realpath "$0")")"
 export SMART_ACTIONS_PROJECT_DIR
 
 source "$SMART_ACTIONS_PROJECT_DIR/settings.conf"
+AUDIO_CONFIG_FILE="$SMART_ACTIONS_PROJECT_DIR/audio.conf"
 
 UUID=$(uuidgen)
 export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE="/tmp/smart_actions_command_builder_output_file_${UUID}"
@@ -51,27 +52,60 @@ end_output_audio_vocal() {
 #   HD-Audio Generic (plughw:2,2)
 #   Jabra EVOLVE LINK MS (plughw:3,0)
 #   HD Pro Webcam C920 (plughw:4,0)
-list_audio_devices() {
-  LANG=C arecord -l | awk '
+
+# Funzione che legge i dispositivi audio
+read_audio_devices() {
+  mapfile -t devices < <(LANG=C arecord -l | awk '
     /^card [0-9]+:/ {
-      card_num = $2
-      sub(/:$/, "", card_num)
+      card_num = $2; sub(/:$/, "", card_num)
       match($0, /\[[^]]*\]/)
       card_name = substr($0, RSTART+1, RLENGTH-2)
-
       line = $0
       while (match(line, /device [0-9]+:/)) {
         dev_str = substr(line, RSTART, RLENGTH)
         split(dev_str, parts, " ")
         device_num = parts[2]
         sub(/:$/, "", device_num)
-        print "" card_name " (plughw:" card_num "," device_num ")"
-
+        print card_name " (plughw:" card_num "," device_num ")"
         line = substr(line, RSTART + RLENGTH)
       }
     }
-  '
+  ')
 }
+
+show_audio_devices() {
+  local selected_device=""
+  [[ -f "$AUDIO_CONFIG_FILE" ]] && selected_device=$(<"$AUDIO_CONFIG_FILE")
+
+  echo "Available audio devices:"
+  for i in "${!devices[@]}"; do
+    local marker=" "
+    if [[ "${devices[i]}" == "$selected_device" ]]; then
+      marker="*"
+    fi
+    printf "  %d) %s %s\n" "$i" "${devices[i]}" "$marker"
+  done
+}
+
+select_default_audio_device() {
+  while true; do
+    show_audio_devices
+    echo
+    read -rp "Insert the audio device number to select it (or 'q' to quit): " choice
+    if [[ "$choice" == "q" ]]; then
+      echo "Quit without selecting a device."
+      exit 0
+    elif [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 0 && choice < ${#devices[@]} )); then
+      echo "${devices[choice]}" > "$AUDIO_CONFIG_FILE"
+      echo "Selected audio device: ${devices[choice]} *"
+      break
+    else
+      echo "Input not valid. Please retry."
+    fi
+  done
+}
+
+read_audio_devices
 
 help() {
   echo
@@ -96,7 +130,8 @@ help() {
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Other commands:${SMART_ACTIONS_COLOR_RESET}"
   echo "  end - Stop the recording and ongoing processes."
   echo "  end_output_audio_vocal - Stop the output audio vocal."
-  echo "  list_audio_devices - Stop the output audio vocal."
+  echo "  show_audio_devices - Show all the available audio devices."
+  echo "  select_default_audio_device - Select the default audio device."
   echo "  print_settings - Print the smart actions script settings."
   echo "  help - Show this help message."
   echo
@@ -104,7 +139,8 @@ help() {
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} dictate_text - Start audio recording and convert it to text (stop the recording with CTRL+C or end)."
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} end"
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} end_output_audio_vocal"
-  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} list_audio_devices"
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} show_audio_devices"
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} select_default_audio_device"
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} audio_to_text -f /home/file.wav"
   exit 1
 }

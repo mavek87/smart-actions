@@ -11,3 +11,4 @@ _xxl_data/
 *.txt
 *.text
 /.idea
+/audio.conf
