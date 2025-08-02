@@ -46,14 +46,14 @@ end_output_audio_vocal() {
   pkill -f "piper"
 }
 
+# Used to read the audio devices from the system using arecord (and populating the ./audio.conf file)
+#
 # OUTPUT EXAMPLE:
 #   Yeti Nano (plughw:1,0)
 #   HD-Audio Generic (plughw:2,0)
 #   HD-Audio Generic (plughw:2,2)
 #   Jabra EVOLVE LINK MS (plughw:3,0)
 #   HD Pro Webcam C920 (plughw:4,0)
-
-# Funzione che legge i dispositivi audio
 read_audio_devices() {
   mapfile -t devices < <(LANG=C arecord -l | awk '
     /^card [0-9]+:/ {
