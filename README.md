@@ -12,6 +12,13 @@ https://github.com/Purfview/whisper-standalone-win/releases
 curl https://github.com/Purfview/whisper-standalone-win/releases/download/Faster-Whisper-XXL/Faster-Whisper-XXL_r245.2_linux.7z 
 ```
 
+Fix:
+
+```bash
+sudo apt install patchelf
+patchelf --clear-execstack /opt/FasterWhisper/_xxl_data/ctranslate2.libs/libctranslate2-d3638643.so.4.4.0
+```
+
 In the future maybe also **Whisper.cpp** could be supported:
 
 https://github.com/ggerganov/whisper.cpp
