@@ -109,6 +109,40 @@ select_default_audio_device() {
 
 read_audio_devices
 
+get_actions_json() {
+  local actions_json="["
+
+  for action_dir in "$SMART_ACTIONS_PROJECT_DIR/actions"/*/; do
+    action_name=$(basename "$action_dir")
+    action_conf="${action_dir}action.conf"
+
+    if [[ -f "$action_conf" ]]; then
+      action_description=$(grep '^DESCRIPTION=' "$action_conf" | cut -d '=' -f2- | tr -d '"')
+    else
+      action_description="No description available."
+    fi
+
+    # Escape eventuali virgolette nella descrizione
+    action_description_escaped=$(printf '%s' "$action_description" | sed 's/"/\\"/g')
+
+    actions_json+=$(
+      cat <<EOF
+{
+  "action_name": "$action_name",
+  "action_description": "$action_description_escaped",
+  "action_config_file": "$action_conf"
+},
+EOF
+    )
+  done
+
+  # Rimuove l'ultima virgola e chiude l'array
+  actions_json=$(echo "$actions_json" | sed '$ s/,$//')
+  actions_json+="]"
+
+  echo "$actions_json"
+}
+
 help() {
   echo
   echo -e "${SMART_ACTIONS_COLOR_BLUE}Usage:${SMART_ACTIONS_COLOR_RESET} $0 {action_name|end|help}"
@@ -134,6 +168,7 @@ help() {
   echo "  end_output_audio_vocal - Stop the output audio vocal."
   echo "  show_audio_devices - Show all the available audio devices."
   echo "  select_default_audio_device - Select the default audio device."
+  echo "  get_actions_json - Get all the actions in a json file format."
   echo "  print_settings - Print the smart actions script settings."
   echo "  help - Show this help message."
   echo
@@ -143,6 +178,8 @@ help() {
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} end_output_audio_vocal"
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} show_audio_devices"
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} select_default_audio_device"
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} get_actions_json"
+  echo "  ./${SMART_ACTIONS_SCRIPT_NAME} print_settings"
   echo "  ./${SMART_ACTIONS_SCRIPT_NAME} audio_to_text -f /home/file.wav"
   exit 1
 }

@@ -50,37 +50,6 @@ load_config() {
   fi
 }
 
-#load_config() {
-#  if [[ -f "$SMART_ACTIONS_CONFIG_FILE" ]]; then
-#    while IFS="=" read -r key value_rest; do
-#      # Rimuove spazi iniziali e finali
-#      key="$(echo "$key" | xargs)"
-#      value="$(echo "$value_rest" | xargs)"
-#
-#      # Ignora righe vuote o commenti
-#      [[ -z "$key" || "$key" =~ ^# ]] && continue
-#
-#      if [[ "$key" == OPTIONS_* ]]; then
-#        option_key="${key#OPTIONS_}"
-#        add_option "$option_key" "$value"
-#      elif [[ "$key" == EXAMPLES_* ]]; then
-#        example_key="${key#EXAMPLES_}"
-#        EXAMPLES["$example_key"]="$value"
-#      elif [[ "$key" == DEFAULTS_* ]]; then
-#        default_key="${key#DEFAULTS_}"
-#        DEFAULTS["$default_key"]="$value"
-#      elif [[ "$key" == "MANDATORY_OPTIONS" ]]; then
-#        read -r -a MANDATORY_OPTIONS <<<"$value"
-#      elif [[ "$key" == "DESCRIPTION" ]]; then
-#        description="$value"
-#      fi
-#    done < <(grep -v '^#' "$SMART_ACTIONS_CONFIG_FILE") # Esclude commenti prima di leggere
-#  else
-#    echo -e "${SMART_ACTIONS_COLOR_RED}Error: Configuration file '$SMART_ACTIONS_CONFIG_FILE' not found${SMART_ACTIONS_COLOR_RESET}"
-#    exit 1
-#  fi
-#}
-
 print_config() {
   cat "$SMART_ACTIONS_CONFIG_FILE"
 }
