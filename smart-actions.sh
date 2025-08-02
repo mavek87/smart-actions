@@ -18,14 +18,14 @@ export SMART_ACTIONS_COLOR_YELLOW="\e[33m"
 export SMART_ACTIONS_COLOR_BLUE="\e[34m"
 export SMART_ACTIONS_COLOR_RESET="\e[0m"
 
-# Funzione dinamica per invocare gli script
+# Dynamic function to invoke the action scripts
 invoke_action() {
   action_name="${FUNCNAME[1]}" # Ottieni il nome della funzione chiamante
   action_script="${SMART_ACTIONS_PROJECT_DIR}/actions/${action_name}/action.sh"
 
-  # Verifica se lo script esiste
+  # Verify if the action script exists
   if [[ -f "$action_script" ]]; then
-    "$action_script" "$@" # Passa gli argomenti al comando
+    "$action_script" "$@" # Pass the arguments to the command
   else
     echo -e "${SMART_ACTIONS_COLOR_RED}Error: Script for action '$action_name' does not exist${SMART_ACTIONS_COLOR_RESET}"
     exit 1
@@ -157,13 +157,13 @@ print_settings () {
 mkdir -p /tmp
 touch "$SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE"
 
-# Ciclo che esplora la cartella actions e crea le funzioni dinamicamente
+# Cycle which explores the actions folders and creates the functions dinamically
 for action_dir in "$SMART_ACTIONS_PROJECT_DIR/actions"/*/; do
-  # Estrai il nome della cartella (rimuovi la parte finale '/')
+  # Extract the name of the action directory (remove the trailing '/')
   action_name=$(basename "$action_dir")
   # echo $action_name
 
-  # Crea una funzione per ogni cartella in actions
+  # Create a function for each folder in actions
   eval "
     $action_name() {
       invoke_action \"\$@\"
