@@ -86,6 +86,7 @@ https://github.com/rhasspy/piper
 ```bash
 ffmpeg -f alsa -i default -y output.wav
 ffmpeg -f alsa -i hw:3,0 output.wav
+ffmpeg -f alsa -i plughw:3,0 output.wav
 ```
 
 alternative:
