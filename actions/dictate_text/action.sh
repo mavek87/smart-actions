@@ -13,7 +13,7 @@ execute_action() {
   echo "Execute: $SCRIPT_NAME"
 
   if [[ -n "$language" ]]; then
-    eval "${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language}"
+    eval "${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language} --pulse-device-name alsa_input.usb-GN_Netcom_A_S_Jabra_EVOLVE_LINK_MS_00004F9F0F5A09-00.mono-fallback"
   else
     faster_whisper_cmd="${FASTER_WHISPER_DIR}/faster-whisper --vad_method pyannote_v3 --device cuda --model ${model} --output_format text --task ${task}"
     # This is now impossible, if language is present nerd-dictataton is used
