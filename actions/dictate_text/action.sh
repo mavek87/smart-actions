@@ -22,9 +22,11 @@ execute_action() {
     fi
     faster_whisper_cmd+=" ${FASTER_WHISPER_DIR}/rec_audio.mp3"
 
-    echo "Starting audio recording..."
     # arecord -D "${audio_device}" -f cd -c 1 -r "${audio_sampling_rate}" "${FASTER_WHISPER_DIR}/rec_audio.wav"
-    ffmpeg -f alsa -i "${audio_device}" -ac 1 -ar "${audio_sampling_rate}" -codec:a libmp3lame -b:a 96k -y "${FASTER_WHISPER_DIR}/rec_audio.mp3"
+    ffmpeg_cmd="ffmpeg -f alsa -i ${audio_device} -ac 1 -ar ${audio_sampling_rate} -codec:a libmp3lame -b:a 96k -y ${FASTER_WHISPER_DIR}/rec_audio.mp3"
+    echo "Starting audio recording..."
+    echo "ffmpeg command: $ffmpeg_cmd"
+    eval "$ffmpeg_cmd"
 
     echo "Converting the recorded audio to text..."
     eval "$faster_whisper_cmd"
@@ -67,6 +69,30 @@ audio_device="${CMD_ARGS["audio_device"]}"
 audio_sampling_rate="${CMD_ARGS["audio_sampling_rate"]}"
 output_format="${CMD_ARGS["output_format"]}"
 output_terminator="${CMD_ARGS["output_terminator"]}"
+
+# duplicated code
+if [[ -z "${audio_device}" || "${audio_device}" == "default" ]]; then
+  if [[ -f "$AUDIO_CONFIG_FILE" ]]; then
+    audio_device=$(<"$AUDIO_CONFIG_FILE")
+
+    audio_device_extracted=$(echo "$audio_device" | sed -n 's/.*(\([^)]*\)).*/\1/p')
+
+    audio_device_extracted="${audio_device_extracted#"${audio_device_extracted%%[![:space:]]*}"}"
+    audio_device_extracted="${audio_device_extracted%"${audio_device_extracted##*[![:space:]]}"}"
+
+    if [[ -z "${audio_device_extracted}" ]]; then
+      audio_device="default"
+    else
+      audio_device="$audio_device_extracted"
+    fi
+
+    echo "Using default audio device from config: $audio_device"
+  else
+    echo "No audio device specified and no default device found."
+  fi
+else
+  echo "Using audio device passed as parameter: $audio_device"
+fi
 
 validate_supported_value "output_terminator" "$output_terminator" "none" "enter"
 validate_supported_value "output_format" "$output_format" "text" "string"

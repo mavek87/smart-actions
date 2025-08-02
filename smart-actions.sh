@@ -8,6 +8,7 @@ export SMART_ACTIONS_PROJECT_DIR
 
 source "$SMART_ACTIONS_PROJECT_DIR/settings.conf"
 AUDIO_CONFIG_FILE="$SMART_ACTIONS_PROJECT_DIR/audio.conf"
+export AUDIO_CONFIG_FILE
 
 UUID=$(uuidgen)
 export SMART_ACTIONS_COMMAND_BUILDER_OUTPUT_FILE="/tmp/smart_actions_command_builder_output_file_${UUID}"
