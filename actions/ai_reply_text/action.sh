@@ -49,20 +49,32 @@ execute_action() {
   fi
 
   echo "The AI is elaborating a response..."
-  pre_prompt=""
+  local pre_prompt=""
   {
     if [[ "$selection_target" != "none" ]]; then
       pre_prompt="$(xclip -selection "${selection_target}" -o)"
     fi
   }
+
+  local tgpt_cmd=(
+    tgpt
+    "$tgpt_quiet_param"
+    "$tgpt_output_format"
+    --provider "$ai_provider"
+    --preprompt "$pre_prompt"
+    ${model:+--model "$model"}
+    ${url:+--url "$url"}
+    "$(cat "${OUTPUT_DIR}/rec_audio.text")"
+  )
+
   if [[ "$output_destination" == "terminal" ]]; then
-    echo "$(tr '\n' ' ' <"${OUTPUT_DIR}/rec_audio.text")" &&
-      # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it wont work
-      tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${OUTPUT_DIR}/rec_audio.text")"
+    echo "$(tr '\n' ' ' <"${OUTPUT_DIR}/rec_audio.text")"
+    "${tgpt_cmd[@]}"
 
   elif [[ "$output_destination" == "display" ]]; then
     # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it wont work
-    tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" -preprompt "$pre_prompt" "$(cat "${OUTPUT_DIR}/rec_audio.text")" >"${OUTPUT_DIR}/reply_ai.txt"
+    "${tgpt_cmd[@]}" > "${OUTPUT_DIR}/reply_ai.txt"
+
     sed -i 's/\r//' "${OUTPUT_DIR}/reply_ai.txt" # Remove \r characters
 
     if [[ "$output_audio_voice" == "true" ]]; then
@@ -112,6 +124,7 @@ fi
 
 load_args_from_built_command
 
+url="${CMD_ARGS["url"]}"
 model="${CMD_ARGS["model"]}"
 ai_provider="${CMD_ARGS["ai_provider"]}"
 task="${CMD_ARGS["task"]}"
@@ -122,6 +135,10 @@ selection_target="${CMD_ARGS["selection_target"]}"
 output_destination="${CMD_ARGS["output_destination"]}"
 output_format="${CMD_ARGS["output_format"]}"
 output_audio_voice="${CMD_ARGS["output_audio_voice"]}"
+
+if [[ "${ai_provider}" == "ollama" ]]; then
+  ai_provider="openai"
+fi
 
 # duplicated code
 if [[ -z "${audio_device}" || "${audio_device}" == "default" ]]; then
@@ -148,7 +165,7 @@ else
 fi
 
 validate_supported_value "output_audio_voice" "$output_audio_voice" "true" "false"
-validate_supported_value "ai_provider" "$ai_provider" "duckduckgo" "phind" "ollama" "pollinations"
+validate_supported_value "ai_provider" "$ai_provider" "openai" "duckduckgo" "phind" "ollama" "pollinations"
 validate_supported_value "output_destination" "$output_destination" "terminal" "display"
 validate_supported_value "output_format" "$output_format" "text" "string" "code_string" "code_text"
 
