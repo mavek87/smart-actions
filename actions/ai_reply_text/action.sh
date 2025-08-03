@@ -53,14 +53,29 @@ execute_action() {
     fi
   }
 
+  tgpt_cmd="tgpt $tgpt_quiet_param $tgpt_output_format --provider \"$ai_provider\""
+  if [[ -n "$preprompt" ]]; then
+    tgpt_cmd+=" --preprompt \"$preprompt\""
+  fi
+  if [[ -n "$model" ]]; then
+    tgpt_cmd+=" --model \"$model\""
+  fi
+  if [[ -n "$url" ]]; then
+    tgpt_cmd+=" --url \"$url\""
+  fi
+  tgpt_cmd+=" \"$(cat "${OUTPUT_DIR}/rec_audio.text")\""
+
   if [[ "$output_destination" == "terminal" ]]; then
     echo "$(tr '\n' ' ' <"${OUTPUT_DIR}/rec_audio.text")"
-    tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" --preprompt "$pre_prompt" "$(cat "${OUTPUT_DIR}/rec_audio.text")"
+    echo "Executing: $tgpt_cmd"
+    eval "$tgpt_cmd"
     echo "The AI is elaborating a response..."
 
   elif [[ "$output_destination" == "display" ]]; then
     # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it wont work
-    tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" --preprompt "$pre_prompt" "$(cat "${OUTPUT_DIR}/rec_audio.text")" >"${OUTPUT_DIR}/reply_ai.txt"
+    tgpt_cmd+=" \"$(cat "${OUTPUT_DIR}/rec_audio.text")\""
+    echo "Executing: $tgpt_cmd"
+    eval "$tgpt_cmd" > "${OUTPUT_DIR}/reply_ai.txt"
     echo "The AI is elaborating a response..."
 
     sed -i 's/\r//' "${OUTPUT_DIR}/reply_ai.txt" # Remove \r characters
