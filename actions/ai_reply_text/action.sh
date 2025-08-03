@@ -52,7 +52,7 @@ execute_action() {
     tgpt_quiet_param="" # no quiet -q for code otherwise the code doesn't work...
   fi
 
-  local pre_prompt=""
+  pre_prompt=""
   {
     if [[ "$selection_target" != "none" ]]; then
       pre_prompt="$(xclip -selection "${selection_target}" -o)"
@@ -60,8 +60,8 @@ execute_action() {
   }
 
   tgpt_cmd="tgpt $tgpt_quiet_param $tgpt_output_format --provider \"$ai_provider\""
-  if [[ -n "$preprompt" ]]; then
-    tgpt_cmd+=" --preprompt \"$preprompt\""
+  if [[ -n "$pre_prompt" ]]; then
+    tgpt_cmd+=" --preprompt \"$pre_prompt\""
   fi
   if [[ -n "$model" ]]; then
     tgpt_cmd+=" --model \"$model\""
