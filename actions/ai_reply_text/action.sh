@@ -12,15 +12,9 @@ source "${SCRIPT_DIR}/../commons.sh"
 execute_action() {
   echo "Execute: $SCRIPT_NAME"
 
-  tgpt_quiet_param="-q"
-  tgpt_output_format=""
-  if [[ "$output_format" == "text" ]]; then
-    tgpt_output_format="-w"
-  elif [[ "$output_format" == "code_string" || "$output_format" == "code_text" ]]; then
-    tgpt_output_format="-c"
-    tgpt_quiet_param="" # no quiet -q for code otherwise the code doesn't work...
-  fi
-
+  #
+  # Using nerd-dictation (if the language is chosen) or faster-whisper (auto-detects the language) to convert audio to text
+  #
   OUTPUT_DIR=""
   if [[ -n "$language" ]]; then
     OUTPUT_DIR="${NERD_DICTATATION_DIR}"
@@ -46,6 +40,18 @@ execute_action() {
     eval "$faster_whisper_cmd"
   fi
 
+  #
+  # Preparing tgpt to extract the text from the audio and send it to the AI provider
+  #
+  tgpt_quiet_param="-q"
+  tgpt_output_format=""
+  if [[ "$output_format" == "text" ]]; then
+    tgpt_output_format="-w"
+  elif [[ "$output_format" == "code_string" || "$output_format" == "code_text" ]]; then
+    tgpt_output_format="-c"
+    tgpt_quiet_param="" # no quiet -q for code otherwise the code doesn't work...
+  fi
+
   local pre_prompt=""
   {
     if [[ "$selection_target" != "none" ]]; then
@@ -65,6 +71,9 @@ execute_action() {
   fi
   tgpt_cmd+=" \"$(cat "${OUTPUT_DIR}/rec_audio.text")\""
 
+  #
+  # Executing tgpt, then printing the AI response output in the terminal or displaying it on screen
+  #
   if [[ "$output_destination" == "terminal" ]]; then
     echo "$(tr '\n' ' ' <"${OUTPUT_DIR}/rec_audio.text")"
     echo "Executing: $tgpt_cmd"
@@ -80,6 +89,9 @@ execute_action() {
 
     sed -i 's/\r//' "${OUTPUT_DIR}/reply_ai.txt" # Remove \r characters
 
+    #
+    # If the audio output is enabled, use piper to convert the text to audio
+    #
     if [[ "$output_audio_voice" == "true" ]]; then
       (
         if [[ -n "$language" ]]; then
