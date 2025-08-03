@@ -24,8 +24,6 @@ execute_action() {
   OUTPUT_DIR=""
   if [[ -n "$language" ]]; then
     OUTPUT_DIR="${NERD_DICTATATION_DIR}"
-
-    # Hardcoded temporary solution for my Jabra EVOLVE LINK MS mono device TODO: generalize it!
 #    nerd_dictate_cmd="${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language} --pulse-device-name alsa_input.usb-GN_Netcom_A_S_Jabra_EVOLVE_LINK_MS_00004F9F0F5A09-00.mono-fallback --output STDOUT > ${OUTPUT_DIR}/rec_audio.text"
     nerd_dictate_cmd="${NERD_DICTATATION_DIR}/nerd-dictation begin --vosk-model-dir=${NERD_DICTATATION_DIR}/model-${language} --output STDOUT > ${OUTPUT_DIR}/rec_audio.text"
     echo "executing: ${nerd_dictate_cmd}. Use the end command to stop it."
@@ -48,7 +46,6 @@ execute_action() {
     eval "$faster_whisper_cmd"
   fi
 
-  echo "The AI is elaborating a response..."
   local pre_prompt=""
   {
     if [[ "$selection_target" != "none" ]]; then
@@ -56,24 +53,15 @@ execute_action() {
     fi
   }
 
-  local tgpt_cmd=(
-    tgpt
-    "$tgpt_quiet_param"
-    "$tgpt_output_format"
-    --provider "$ai_provider"
-    --preprompt "$pre_prompt"
-    ${model:+--model "$model"}
-    ${url:+--url "$url"}
-    "$(cat "${OUTPUT_DIR}/rec_audio.text")"
-  )
-
   if [[ "$output_destination" == "terminal" ]]; then
     echo "$(tr '\n' ' ' <"${OUTPUT_DIR}/rec_audio.text")"
-    "${tgpt_cmd[@]}"
+    tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" --preprompt "$pre_prompt" "$(cat "${OUTPUT_DIR}/rec_audio.text")"
+    echo "The AI is elaborating a response..."
 
   elif [[ "$output_destination" == "display" ]]; then
     # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it wont work
-    "${tgpt_cmd[@]}" > "${OUTPUT_DIR}/reply_ai.txt"
+    tgpt $tgpt_quiet_param $tgpt_output_format --provider "$ai_provider" --preprompt "$pre_prompt" "$(cat "${OUTPUT_DIR}/rec_audio.text")" >"${OUTPUT_DIR}/reply_ai.txt"
+    echo "The AI is elaborating a response..."
 
     sed -i 's/\r//' "${OUTPUT_DIR}/reply_ai.txt" # Remove \r characters
 
