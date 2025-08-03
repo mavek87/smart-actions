@@ -48,28 +48,24 @@ end_output_audio_vocal() {
   pkill -f "piper"
 }
 
-# Used to read the audio devices from the system using arecord (and populating the ./audio.conf file)
+# Used to read the audio devices from the system
 #
 # OUTPUT EXAMPLE:
-#   Yeti Nano (plughw:1,0)
-#   HD-Audio Generic (plughw:2,0)
-#   HD-Audio Generic (plughw:2,2)
-#   Jabra EVOLVE LINK MS (plughw:3,0)
-#   HD Pro Webcam C920 (plughw:4,0)
+#  0) alsa_input.usb-GN_Netcom_A_S_Jabra_EVOLVE_LINK_MS_00004F9F0F5A09-00.mono-fallback (plughw:3,0)
+#  1) alsa_input.usb-Blue_Microphones_Yeti_Nano_2049SG0020X8_888-000303040606-00.analog-stereo (plughw:1,0)
+#  2) alsa_input.usb-046d_HD_Pro_Webcam_C920_DAA73EAF-02.iec958-stereo (plughw:4,0)
+#  3) alsa_input.pci-0000_2d_00.4.analog-stereo (plughw:2,0)
 read_audio_devices() {
-  mapfile -t devices < <(LANG=C arecord -l | awk '
-    /^card [0-9]+:/ {
-      card_num = $2; sub(/:$/, "", card_num)
-      match($0, /\[[^]]*\]/)
-      card_name = substr($0, RSTART+1, RLENGTH-2)
-      line = $0
-      while (match(line, /device [0-9]+:/)) {
-        dev_str = substr(line, RSTART, RLENGTH)
-        split(dev_str, parts, " ")
-        device_num = parts[2]
-        sub(/:$/, "", device_num)
-        print card_name " (plughw:" card_num "," device_num ")"
-        line = substr(line, RSTART + RLENGTH)
+  mapfile -t devices < <(LANG=C pactl list sources | awk '
+    /^Source #/ {name=""; card=""; device=""}
+    /^\s+Name:/ {name = $2}
+    /^\s+alsa.card =/ {card = $3}
+    /^\s+alsa.device =/ {device = $3}
+    /^$/ {
+      if (name ~ /^alsa_input/ && name !~ /\.monitor$/) {
+        gsub(/"/, "", card)
+        gsub(/"/, "", device)
+        printf "%s (plughw:%s,%s)\n", name, card, device
       }
     }
   ')

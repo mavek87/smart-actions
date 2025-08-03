@@ -2,6 +2,10 @@
 
 Project to perform several actions like vocal dictation, vocal query to AI chatbot, etc..
 
+## Notes
+
+Remember to select in ubuntu the default audio input device to the microphone you want to use!
+
 ## Installation
 
 ### 1) Faster Whisper (Speech to text)
@@ -28,6 +32,11 @@ but this is not being used yet in the scripts
 ### 2) NerdDictation (Dictation)
 
 https://github.com/ideasman42/nerd-dictation
+
+### Useful notes
+
+--pulse-device-name IDENTIFIER
+The name of the pulse-audio device to use for recording. See the output of "pactl list sources" to find device names (using the identifier following "Name:").
 
 ### Issues
 
