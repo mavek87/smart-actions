@@ -42,3 +42,34 @@ validate_file_exists() {
         exit 1
     fi
 }
+
+# Centralized helper to resolve audio device from parameter or default config
+# - Prints informational messages to stderr
+# - Echoes the resolved device name to stdout (so caller can capture it)
+resolve_audio_device() {
+  local current_device="$1"
+
+  if [[ -z "${current_device}" || "${current_device}" == "default" ]]; then
+    if [[ -f "$AUDIO_CONFIG_FILE" ]]; then
+      local config_value extracted
+      config_value=$(<"$AUDIO_CONFIG_FILE")
+      extracted=$(echo "$config_value" | sed -n 's/.*(\([^)]*\)).*/\1/p')
+      # trim spaces
+      extracted="${extracted#"${extracted%%[![:space:]]*}"}"
+      extracted="${extracted%"${extracted##*[![:space:]]}"}"
+
+      if [[ -z "${extracted}" ]]; then
+        current_device="default"
+      else
+        current_device="$extracted"
+      fi
+      echo "Using default audio device from config: $current_device" >&2
+    else
+      echo "No audio device specified and no default device found." >&2
+    fi
+  else
+    echo "Using audio device passed as parameter: $current_device" >&2
+  fi
+
+  echo "$current_device"
+}

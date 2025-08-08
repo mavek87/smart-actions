@@ -81,8 +81,7 @@ execute_action() {
     echo "The AI is elaborating a response..."
 
   elif [[ "$output_destination" == "display" ]]; then
-    # Note: dont use "" on $tgpt_quiet_param and $tgpt_output_format otherwise it wont work
-    tgpt_cmd+=" \"$(cat "${OUTPUT_DIR}/rec_audio.text")\""
+    # Note: dont use quotes on $tgpt_quiet_param and $tgpt_output_format otherwise it wont work
     echo "Executing: $tgpt_cmd"
     eval "$tgpt_cmd" > "${OUTPUT_DIR}/reply_ai.txt"
     echo "The AI is elaborating a response..."
@@ -155,29 +154,8 @@ if [[ "${ai_provider}" == "ollama" ]]; then
   ai_provider="openai"
 fi
 
-# duplicated code
-if [[ -z "${audio_device}" || "${audio_device}" == "default" ]]; then
-  if [[ -f "$AUDIO_CONFIG_FILE" ]]; then
-    audio_device=$(<"$AUDIO_CONFIG_FILE")
-
-    audio_device_extracted=$(echo "$audio_device" | sed -n 's/.*(\([^)]*\)).*/\1/p')
-
-    audio_device_extracted="${audio_device_extracted#"${audio_device_extracted%%[![:space:]]*}"}"
-    audio_device_extracted="${audio_device_extracted%"${audio_device_extracted##*[![:space:]]}"}"
-
-    if [[ -z "${audio_device_extracted}" ]]; then
-      audio_device="default"
-    else
-      audio_device="$audio_device_extracted"
-    fi
-
-    echo "Using default audio device from config: $audio_device"
-  else
-    echo "No audio device specified and no default device found."
-  fi
-else
-  echo "Using audio device passed as parameter: $audio_device"
-fi
+# resolve audio device via common helper
+audio_device="$(resolve_audio_device "$audio_device")"
 
 validate_supported_value "output_audio_voice" "$output_audio_voice" "true" "false"
 validate_supported_value "ai_provider" "$ai_provider" "openai" "duckduckgo" "phind" "ollama" "pollinations"
